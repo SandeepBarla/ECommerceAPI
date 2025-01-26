@@ -22,7 +22,7 @@ namespace ECommerceAPI.Models
         public decimal TotalAmount { get; set; }
 
         [Required]
-        public string PaymentStatus { get; set; } // Pending, Completed, Failed
+        public string PaymentStatus { get; set; } = "Pending"; // Pending, Completed, Failed
 
         [Required]
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
@@ -30,7 +30,7 @@ namespace ECommerceAPI.Models
         [Required]
         public string ShippingAddress { get; set; }
 
-        public string TrackingNumber { get; set; } // Optional
+        public string TrackingNumber { get; set; } = "Not Assigned";
 
         public string OrderStatus { get; set; } = "Processing"; // Processing, Shipped, Delivered, Canceled
     }
