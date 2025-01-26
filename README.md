@@ -3,8 +3,8 @@
 ### 🔗 **Live API (if deployed):** _Coming soon_
 
 ## 📌 Overview
-This is a **.NET 8-based E-Commerce API** for managing users, authentication, and orders.  
-Currently, the project supports **JWT authentication** and **PostgreSQL integration**.
+This is a **.NET 8-based E-Commerce API** for managing users, orders, and products (coming soon).  
+Currently, the project supports **JWT authentication, Order Management, and PostgreSQL integration**.
 
 ---
 
@@ -14,13 +14,17 @@ Currently, the project supports **JWT authentication** and **PostgreSQL integrat
 - Login and get JWT tokens
 - Get authenticated user profile
 
+ ✅ **Order Management**
+- Create new orders
+- View orders for logged-in users
+- Admins can update order status  
+
 ✅ **PostgreSQL Database Integration**
 
 ---
 
 ## 🚧 Features in Progress
-🔜 **Order Management API**  
-🔜 **Product Management API**  
+🔜 **Product Management API (CRUD for products)**  
 🔜 **Secure Payments (Stripe/Razorpay)**  
 🔜 **Role-Based Access (Admin & Customer)**  
 🔜 **Swagger API Documentation**  
@@ -74,12 +78,21 @@ dotnet run
 ---
 
 ## 🔗 API Endpoints
+
 ### **User Authentication**
 | Method | Endpoint | Description |
 |--------|---------|------------|
 | `POST` | `/api/auth/register` | Register a new user |
 | `POST` | `/api/auth/login` | Login and get JWT token |
 | `GET`  | `/api/auth/profile` | Get user details (JWT required) |
+
+### **Order Management**
+| Method | Endpoint | Description |
+|--------|---------|------------|
+| `POST` | `/api/orders` | Create an order |
+| `GET`  | `/api/orders` | View all orders for logged-in user |
+| `GET`  | `/api/orders/{id}` | Get order details |
+| `PUT`  | `/api/orders/{id}/status` | Admin: Update order status |
 
 ---
 
