@@ -3,6 +3,7 @@ using ECommerceAPI.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using ECommerceAPI.Services;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddScoped<CartService>();
+
 
 // ✅ Enable CORS
 builder.Services.AddCors(options =>
@@ -113,7 +116,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "E-Commerce API v1");
-        c.RoutePrefix = string.Empty; // ✅ Makes Swagger available at root URL
+        c.RoutePrefix = "swagger"; // ✅ Ensures Swagger is available at /swagger
     });
 }
 
