@@ -3,8 +3,8 @@
 ### 🔗 **Live API (if deployed):** _Coming soon_
 
 ## 📌 Overview
-This is a **.NET 8-based E-Commerce API** for managing users, orders, and products (coming soon).  
-Currently, the project supports **JWT authentication, Order Management, and PostgreSQL integration**.
+This is a **.NET 8-based E-Commerce API** for managing users, orders, and products.  
+Currently, the project supports **JWT authentication, Order Management, Product Management, and PostgreSQL integration**.
 
 ---
 
@@ -14,20 +14,25 @@ Currently, the project supports **JWT authentication, Order Management, and Post
 - Login and get JWT tokens
 - Get authenticated user profile
 
- ✅ **Order Management**
+✅ **Order Management**
 - Create new orders
 - View orders for logged-in users
 - Admins can update order status  
-
+  
+✅ **Product Management**
+- CRUD operations for products (Admin only for create, update, delete)
+- Public access to product listings  
+  
+✅ **Swagger API Documentation**
+- Interactive API testing through Swagger UI  
+  
 ✅ **PostgreSQL Database Integration**
 
 ---
 
 ## 🚧 Features in Progress
-🔜 **Product Management API (CRUD for products)**  
 🔜 **Secure Payments (Stripe/Razorpay)**  
-🔜 **Role-Based Access (Admin & Customer)**  
-🔜 **Swagger API Documentation**  
+🔜 **Role-Based Access (Admin & Customer Enhancements)**  
 🔜 **Docker & Cloud Deployment (Azure/AWS)**
 
 ---
@@ -36,7 +41,7 @@ Currently, the project supports **JWT authentication, Order Management, and Post
 - **Backend:** `.NET 8 Web API`
 - **Database:** `PostgreSQL`
 - **Authentication:** `JWT + BCrypt`
-- **API Documentation:** `Swagger (Coming Soon)`
+- **API Documentation:** `Swagger`
 - **Deployment:** `Docker, Azure/AWS (Coming Soon)`
 
 ---
@@ -77,6 +82,13 @@ dotnet run
 
 ---
 
+## 🔗 API Documentation (Swagger UI)
+- **Swagger is enabled for API testing.**
+- **Access Swagger UI at:**  
+  📌 [http://localhost:5000](http://localhost:5000)
+
+---
+
 ## 🔗 API Endpoints
 
 ### **User Authentication**
@@ -93,6 +105,15 @@ dotnet run
 | `GET`  | `/api/orders` | View all orders for logged-in user |
 | `GET`  | `/api/orders/{id}` | Get order details |
 | `PUT`  | `/api/orders/{id}/status` | Admin: Update order status |
+
+### **Product Management**
+| Method | Endpoint | Description |
+|--------|---------|------------|
+| `POST` | `/api/products` | Create a product (Admin only) |
+| `GET`  | `/api/products` | Get all products |
+| `GET`  | `/api/products/{id}` | Get product details |
+| `PUT`  | `/api/products/{id}` | Update a product (Admin only) |
+| `DELETE` | `/api/products/{id}` | Delete a product (Admin only) |
 
 ---
 
