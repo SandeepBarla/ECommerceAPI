@@ -25,12 +25,17 @@ namespace ECommerceAPI.Services
         {
             return await _context.Orders
                 .Where(o => o.UserId == userId)
+                .Include(o => o.Products) // ✅ Ensure Products are included
+                .ThenInclude(op => op.Product) // ✅ Include actual Product details
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
-            return await _context.Orders.ToListAsync();
+            return await _context.Orders
+                .Include(o => o.Products) // ✅ Ensure Products are included
+                .ThenInclude(op => op.Product) // ✅ Include actual Product details
+                .ToListAsync();
         }
     }
 }
