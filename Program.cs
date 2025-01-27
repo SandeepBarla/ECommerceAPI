@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using ECommerceAPI.Data;
+using ECommerceAPI.Infrastructure.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using ECommerceAPI.Services;
+using ECommerceAPI.Application.Services;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,10 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 // ✅ Load configuration
 var configuration = builder.Configuration;
 
-// ✅ Load database connection string
+// ✅ Configure Database
 var connectionString = configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString, b => b.MigrationsAssembly("ECommerceAPI"))); // 🔥 Ensures migrations are created in Infrastructure
 
 // ✅ Load JWT settings
 var jwtSettings = configuration.GetSection("Jwt");
@@ -25,7 +25,7 @@ if (key.Length < 32)
     throw new InvalidOperationException("JWT Key is too short! Must be at least 32 characters.");
 }
 
-// ✅ Configure authentication
+// ✅ Configure Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -43,10 +43,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+
+// ✅ Add Application Services
 builder.Services.AddScoped<CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IUserService, UserService>();
-
 
 // ✅ Enable CORS
 builder.Services.AddCors(options =>
@@ -55,7 +56,7 @@ builder.Services.AddCors(options =>
         policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
-// ✅ Add controllers, Swagger & Exception Handling
+// ✅ Add Controllers, Swagger & Exception Handling
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -122,5 +123,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// ✅ Map Controllers
 app.MapControllers();
+
+// ✅ Run the Application
 app.Run();
