@@ -43,7 +43,10 @@ namespace ECommerceAPI.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "User registered successfully." });
+            // ✅ Generate JWT Token for the new user
+            var token = GenerateJwtToken(user);
+
+            return Ok(new AuthResponse { Token = token, Role = user.Role });
         }
 
         [HttpPost("login")]
