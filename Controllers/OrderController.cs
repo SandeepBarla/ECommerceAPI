@@ -6,6 +6,7 @@ using ECommerceAPI.Models;
 using ECommerceAPI.DTOs.RequestModels;
 using ECommerceAPI.DTOs.ResponseModels;
 using System.Security.Claims;
+using ECommerceAPI.Services;
 
 namespace ECommerceAPI.Controllers
 {
@@ -13,11 +14,13 @@ namespace ECommerceAPI.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
+        private readonly IOrderService _orderService;
         private readonly AppDbContext _context;
 
-        public OrderController(AppDbContext context)
+        public OrderController(AppDbContext context, IOrderService orderService)
         {
             _context = context;
+            _orderService = orderService;
         }
 
         // ✅ Create Order (Using DTO)
@@ -119,6 +122,37 @@ namespace ECommerceAPI.Controllers
             order.OrderStatus = status;
             await _context.SaveChangesAsync();
             return Ok(new { message = "Order status updated", orderId = id, newStatus = status });
+        }
+        
+        [HttpGet("user/{userId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetOrdersByUserId(int userId)
+        {
+            var orders = await _orderService.GetOrdersByUserIdAsync(userId);
+            if (orders == null || !orders.Any())
+                return NotFound("No orders found for this user.");
+
+            var response = orders.Select(o => new OrderResponse
+            {
+                Id = o.Id,
+                Products = o.Products,
+                TotalAmount = o.TotalAmount,
+                PaymentStatus = o.PaymentStatus,
+                OrderStatus = o.OrderStatus,
+                OrderDate = o.OrderDate,
+                ShippingAddress = o.ShippingAddress,
+                TrackingNumber = o.TrackingNumber
+            });
+
+            return Ok(response);
+        }
+        
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var orders = await _orderService.GetAllOrdersAsync();
+            return Ok(orders);
         }
     }
 }
