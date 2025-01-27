@@ -1,5 +1,8 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace ECommerceAPI.Models
 {
@@ -11,27 +14,26 @@ namespace ECommerceAPI.Models
         [Required]
         public int UserId { get; set; }
 
-        [ForeignKey("UserId")]
-        public User User { get; set; } // Navigation property
-
+        // ✅ Store Products as a List instead of a string
         [Required]
-        public string Products { get; set; } // JSON-encoded product list
+        public List<OrderProduct> Products { get; set; } = new List<OrderProduct>();
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; set; }
 
         [Required]
-        public string PaymentStatus { get; set; } = "Pending"; // Pending, Completed, Failed
+        public string PaymentStatus { get; set; }
 
         [Required]
-        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+        public string OrderStatus { get; set; }
+
+        [Required]
+        public DateTime OrderDate { get; set; }
 
         [Required]
         public string ShippingAddress { get; set; }
 
         public string TrackingNumber { get; set; } = "Not Assigned";
-
-        public string OrderStatus { get; set; } = "Processing"; // Processing, Shipped, Delivered, Canceled
     }
 }

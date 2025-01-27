@@ -23,7 +23,7 @@ namespace ECommerceAPI.Controllers
             _orderService = orderService;
         }
 
-        // ✅ Create Order (Using DTO)
+        // ✅ Create Order (Fixed DTO Mapping)
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] OrderCreateRequest orderDto)
@@ -33,12 +33,16 @@ namespace ECommerceAPI.Controllers
             var order = new Order
             {
                 UserId = userId,
-                Products = orderDto.Products,
                 TotalAmount = orderDto.TotalAmount,
                 ShippingAddress = orderDto.ShippingAddress,
                 PaymentStatus = "Pending",
                 OrderStatus = "Processing",
-                OrderDate = DateTime.UtcNow
+                OrderDate = DateTime.UtcNow,
+                Products = orderDto.Products.Select(p => new OrderProduct
+                {
+                    ProductId = p.ProductId,
+                    Quantity = p.Quantity
+                }).ToList()
             };
 
             _context.Orders.Add(order);
@@ -47,7 +51,11 @@ namespace ECommerceAPI.Controllers
             var response = new OrderResponse
             {
                 Id = order.Id,
-                Products = order.Products,
+                Products = order.Products.Select(p => new OrderProductResponse
+                {
+                    ProductId = p.ProductId,
+                    Quantity = p.Quantity
+                }).ToList(),
                 TotalAmount = order.TotalAmount,
                 PaymentStatus = order.PaymentStatus,
                 OrderStatus = order.OrderStatus,
@@ -59,18 +67,25 @@ namespace ECommerceAPI.Controllers
             return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, response);
         }
 
-        // ✅ Get Orders for Logged-in User
+        // ✅ Get Orders for Logged-in User (Fixed Mapping)
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetUserOrders()
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var orders = await _context.Orders.Where(o => o.UserId == userId).ToListAsync();
+            var orders = await _context.Orders
+                .Include(o => o.Products)
+                .Where(o => o.UserId == userId)
+                .ToListAsync();
 
             var response = orders.Select(o => new OrderResponse
             {
                 Id = o.Id,
-                Products = o.Products,
+                Products = o.Products.Select(p => new OrderProductResponse
+                {
+                    ProductId = p.ProductId,
+                    Quantity = p.Quantity
+                }).ToList(),
                 TotalAmount = o.TotalAmount,
                 PaymentStatus = o.PaymentStatus,
                 OrderStatus = o.OrderStatus,
@@ -82,12 +97,15 @@ namespace ECommerceAPI.Controllers
             return Ok(response);
         }
 
-        // ✅ Get Order by ID
+        // ✅ Get Order by ID (Fixed Mapping)
         [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderById(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders
+                .Include(o => o.Products)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
             if (order == null)
                 return NotFound("Order not found.");
 
@@ -98,7 +116,11 @@ namespace ECommerceAPI.Controllers
             var response = new OrderResponse
             {
                 Id = order.Id,
-                Products = order.Products,
+                Products = order.Products.Select(p => new OrderProductResponse
+                {
+                    ProductId = p.ProductId,
+                    Quantity = p.Quantity
+                }).ToList(),
                 TotalAmount = order.TotalAmount,
                 PaymentStatus = order.PaymentStatus,
                 OrderStatus = order.OrderStatus,
@@ -123,9 +145,10 @@ namespace ECommerceAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Order status updated", orderId = id, newStatus = status });
         }
-        
-        [HttpGet("user/{userId}")]
+
+        // ✅ Get Orders by User ID (Admin Only) (Fixed Mapping)
         [Authorize(Roles = "Admin")]
+        [HttpGet("users/{userId}")]
         public async Task<IActionResult> GetOrdersByUserId(int userId)
         {
             var orders = await _orderService.GetOrdersByUserIdAsync(userId);
@@ -135,7 +158,11 @@ namespace ECommerceAPI.Controllers
             var response = orders.Select(o => new OrderResponse
             {
                 Id = o.Id,
-                Products = o.Products,
+                Products = o.Products.Select(p => new OrderProductResponse
+                {
+                    ProductId = p.ProductId,
+                    Quantity = p.Quantity
+                }).ToList(),
                 TotalAmount = o.TotalAmount,
                 PaymentStatus = o.PaymentStatus,
                 OrderStatus = o.OrderStatus,
@@ -146,13 +173,31 @@ namespace ECommerceAPI.Controllers
 
             return Ok(response);
         }
-        
-        [HttpGet("all")]
+
+        // ✅ Get All Orders (Admin Only) (Fixed Mapping)
         [Authorize(Roles = "Admin")]
+        [HttpGet("all")]
         public async Task<IActionResult> GetAllOrders()
         {
             var orders = await _orderService.GetAllOrdersAsync();
-            return Ok(orders);
+
+            var response = orders.Select(o => new OrderResponse
+            {
+                Id = o.Id,
+                Products = o.Products.Select(p => new OrderProductResponse
+                {
+                    ProductId = p.ProductId,
+                    Quantity = p.Quantity
+                }).ToList(),
+                TotalAmount = o.TotalAmount,
+                PaymentStatus = o.PaymentStatus,
+                OrderStatus = o.OrderStatus,
+                OrderDate = o.OrderDate,
+                ShippingAddress = o.ShippingAddress,
+                TrackingNumber = o.TrackingNumber
+            });
+
+            return Ok(response);
         }
     }
 }
