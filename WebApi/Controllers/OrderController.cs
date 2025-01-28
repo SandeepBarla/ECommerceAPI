@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
 using System.Security.Claims;
 using ECommerceAPI.Application.Services;
+using ECommerceAPI.Infrastructure.Entities;
 
 namespace ECommerceAPI.WebApi.Controllers
 {
@@ -16,11 +18,13 @@ namespace ECommerceAPI.WebApi.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public OrderController(AppDbContext context, IOrderService orderService)
+        public OrderController(AppDbContext context, IOrderService orderService, IMapper mapper)
         {
             _context = context;
             _orderService = orderService;
+            _mapper = mapper;
         }
 
         // ✅ Create Order (Fixed DTO Mapping)
@@ -38,20 +42,20 @@ namespace ECommerceAPI.WebApi.Controllers
                 PaymentStatus = "Pending",
                 OrderStatus = "Processing",
                 OrderDate = DateTime.UtcNow,
-                Products = orderDto.Products.Select(p => new OrderProduct
+                OrderProducts = orderDto.Products.Select(p => new OrderProduct
                 {
                     ProductId = p.ProductId,
                     Quantity = p.Quantity
                 }).ToList()
             };
 
-            _context.Orders.Add(order);
+            _context.Orders.Add(_mapper.Map<OrderEntity>(order));
             await _context.SaveChangesAsync();
 
             var response = new OrderResponse
             {
                 Id = order.Id,
-                Products = order.Products.Select(p => new OrderProductResponse
+                Products = order.OrderProducts.Select(p => new OrderProductResponse
                 {
                     ProductId = p.ProductId,
                     Quantity = p.Quantity
@@ -74,14 +78,14 @@ namespace ECommerceAPI.WebApi.Controllers
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var orders = await _context.Orders
-                .Include(o => o.Products)
+                .Include(o => o.OrderProducts)
                 .Where(o => o.UserId == userId)
                 .ToListAsync();
 
             var response = orders.Select(o => new OrderResponse
             {
                 Id = o.Id,
-                Products = o.Products.Select(p => new OrderProductResponse
+                Products = o.OrderProducts.Select(p => new OrderProductResponse
                 {
                     ProductId = p.ProductId,
                     Quantity = p.Quantity
@@ -103,7 +107,7 @@ namespace ECommerceAPI.WebApi.Controllers
         public async Task<IActionResult> GetOrderById(int id)
         {
             var order = await _context.Orders
-                .Include(o => o.Products)
+                .Include(o => o.OrderProducts)
                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if (order == null)
@@ -116,7 +120,7 @@ namespace ECommerceAPI.WebApi.Controllers
             var response = new OrderResponse
             {
                 Id = order.Id,
-                Products = order.Products.Select(p => new OrderProductResponse
+                Products = order.OrderProducts.Select(p => new OrderProductResponse
                 {
                     ProductId = p.ProductId,
                     Quantity = p.Quantity
@@ -158,7 +162,7 @@ namespace ECommerceAPI.WebApi.Controllers
             var response = orders.Select(o => new OrderResponse
             {
                 Id = o.Id,
-                Products = o.Products.Select(p => new OrderProductResponse
+                Products = o.OrderProducts.Select(p => new OrderProductResponse
                 {
                     ProductId = p.ProductId,
                     Quantity = p.Quantity
@@ -184,7 +188,7 @@ namespace ECommerceAPI.WebApi.Controllers
             var response = orders.Select(o => new OrderResponse
             {
                 Id = o.Id,
-                Products = o.Products.Select(p => new OrderProductResponse
+                Products = o.OrderProducts.Select(p => new OrderProductResponse
                 {
                     ProductId = p.ProductId,
                     Quantity = p.Quantity

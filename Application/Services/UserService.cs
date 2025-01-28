@@ -1,3 +1,4 @@
+using AutoMapper;
 using ECommerceAPI.Infrastructure.Context;
 using ECommerceAPI.Application.Models;
 using Microsoft.EntityFrameworkCore;
@@ -12,15 +13,18 @@ namespace ECommerceAPI.Application.Services
     public class UserService : IUserService
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public UserService(AppDbContext context)
+        public UserService(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return await _context.Users.ToListAsync();
+            var userEntities = await _context.Users.ToListAsync();
+            return _mapper.Map<IEnumerable<User>>(userEntities);
         }
     }
 }

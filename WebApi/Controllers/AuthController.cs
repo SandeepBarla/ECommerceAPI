@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ECommerceAPI.Infrastructure.Context;
@@ -7,6 +8,7 @@ using ECommerceAPI.WebApi.DTOs.ResponseModels;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ECommerceAPI.Infrastructure.Entities;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using BC = BCrypt.Net.BCrypt;
@@ -19,11 +21,13 @@ namespace ECommerceAPI.WebApi.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public AuthController(AppDbContext context, IConfiguration configuration)
+        public AuthController(AppDbContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -40,7 +44,7 @@ namespace ECommerceAPI.WebApi.Controllers
                 Role = "Customer"
             };
 
-            _context.Users.Add(user);
+            _context.Users.Add(_mapper.Map<UserEntity>(user));
             await _context.SaveChangesAsync();
 
             // ✅ Generate JWT Token for the new user
@@ -56,7 +60,7 @@ namespace ECommerceAPI.WebApi.Controllers
             if (user == null || !BC.Verify(userDto.Password, user.PasswordHash))
                 return Unauthorized(new { message = "Invalid credentials." });
 
-            var token = GenerateJwtToken(user);
+            var token = GenerateJwtToken(_mapper.Map<User>(user));
 
             return Ok(new AuthResponse { Token = token, Role = user.Role });
         }

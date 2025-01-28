@@ -1,7 +1,9 @@
+using AutoMapper;
 using ECommerceAPI.Infrastructure.Context;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
 using ECommerceAPI.Application.Models;
+using ECommerceAPI.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceAPI.Application.Services
@@ -9,62 +11,64 @@ namespace ECommerceAPI.Application.Services
     public class CartService
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public CartService(AppDbContext context)
+        public CartService(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<CartResponse> GetCart(int userId)
         {
-            var cart = await _context.Carts
+            var cartEntity = await _context.Carts
                 .Include(c => c.CartItems)
                 .ThenInclude(ci => ci.Product)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
-            if (cart == null)
+            if (cartEntity == null)
             {
-                cart = new Cart { UserId = userId };
-                _context.Carts.Add(cart);
+                cartEntity = new CartEntity { UserId = userId };
+                _context.Carts.Add(cartEntity);
                 await _context.SaveChangesAsync();
             }
 
             return new CartResponse
             {
-                CartId = cart.Id,
-                Items = cart.CartItems.Select(ci => new CartItemResponse
+                CartId = cartEntity.Id,
+                Items = cartEntity.CartItems?.Select(ci => new CartItemResponse
                 {
                     ProductId = ci.ProductId,
-                    ProductName = ci.Product.Name,
-                    ProductImage = ci.Product.ImageUrl,
-                    Price = ci.Product.Price,
+                    ProductName = ci.Product?.Name ?? "Unknown",
+                    ProductImage = ci.Product?.ImageUrl ?? string.Empty,
+                    Price = ci.Product?.Price ?? 0,
                     Quantity = ci.Quantity
-                }).ToList()
+                }).ToList() ?? new List<CartItemResponse>() // Ensure null-safety
             };
         }
         
         public async Task UpsertCartItem(int userId, CartUpsertRequest request)
         {
-            var cart = await GetOrCreateCart(userId);
+            var cartEntity = await GetOrCreateCart(userId);
 
-            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == request.ProductId);
+            var cartItemEntity = cartEntity.CartItems.FirstOrDefault(ci => ci.ProductId == request.ProductId);
 
-            if (cartItem != null)
+            if (cartItemEntity != null)
             {
                 if (request.Quantity == 0)
                 {
-                    cart.CartItems.Remove(cartItem);  // ✅ Remove item if quantity is 0
+                    cartEntity.CartItems.Remove(cartItemEntity);  // ✅ Remove item if quantity is 0
                 }
                 else
                 {
-                    cartItem.Quantity = request.Quantity;  // ✅ Update quantity
+                    cartItemEntity.Quantity = request.Quantity;  // ✅ Update quantity
                 }
             }
             else if (request.Quantity > 0)
             {
-                cart.CartItems.Add(new CartItem
+                cartEntity.CartItems.Add(new CartItemEntity
                 {
-                    CartId = cart.Id,
+                    CartId = cartEntity.Id,
                     ProductId = request.ProductId,
                     Quantity = request.Quantity
                 });
@@ -82,17 +86,17 @@ namespace ECommerceAPI.Application.Services
         
         public async Task BulkUpdateCart(int userId, CartBulkUpdateRequest request)
         {
-            var cart = await GetOrCreateCart(userId);
+            var cartEntity = await GetOrCreateCart(userId);
 
             foreach (var item in request.Items)
             {
-                var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == item.ProductId);
+                var cartItem = cartEntity.CartItems.FirstOrDefault(ci => ci.ProductId == item.ProductId);
 
                 if (cartItem != null)
                 {
                     if (item.Quantity == 0)
                     {
-                        cart.CartItems.Remove(cartItem);  // ✅ Remove item if quantity is 0
+                        cartEntity.CartItems.Remove(cartItem);  // ✅ Remove item if quantity is 0
                     }
                     else
                     {
@@ -101,9 +105,9 @@ namespace ECommerceAPI.Application.Services
                 }
                 else if (item.Quantity > 0)
                 {
-                    cart.CartItems.Add(new CartItem
+                    cartEntity.CartItems.Add(new CartItemEntity
                     {
-                        CartId = cart.Id,
+                        CartId = cartEntity.Id,
                         ProductId = item.ProductId,
                         Quantity = item.Quantity
                     });
@@ -114,20 +118,20 @@ namespace ECommerceAPI.Application.Services
         }
 
 
-        private async Task<Cart> GetOrCreateCart(int userId)
+        private async Task<CartEntity> GetOrCreateCart(int userId)
         {
-            var cart = await _context.Carts
+            var cartEntity = await _context.Carts
                 .Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
-            if (cart == null)
+            if (cartEntity == null)
             {
-                cart = new Cart { UserId = userId };
-                _context.Carts.Add(cart);
+                cartEntity = new CartEntity { UserId = userId };
+                _context.Carts.Add(cartEntity);
                 await _context.SaveChangesAsync();
             }
 
-            return cart;
+            return cartEntity;
         }
     }
 }

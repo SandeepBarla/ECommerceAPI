@@ -1,8 +1,10 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ECommerceAPI.Infrastructure.Context;
 using ECommerceAPI.Application.Models;
+using ECommerceAPI.Infrastructure.Entities;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
 
@@ -13,10 +15,12 @@ namespace ECommerceAPI.WebApi.Controllers
     public class ProductController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ProductController(AppDbContext context)
+        public ProductController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // ✅ Create Product (Admin Only)
@@ -33,7 +37,7 @@ namespace ECommerceAPI.WebApi.Controllers
                 ImageUrl = productDto.ImageUrl
             };
 
-            _context.Products.Add(product);
+            _context.Products.Add(_mapper.Map<ProductEntity>(product));
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, new ProductResponse

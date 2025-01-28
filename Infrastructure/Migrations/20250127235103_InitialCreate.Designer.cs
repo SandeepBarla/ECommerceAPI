@@ -3,6 +3,7 @@ using System;
 using ECommerceAPI.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ECommerceAPI.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250127235103_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -205,7 +208,7 @@ namespace ECommerceAPI.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("ECommerceAPI.Infrastructure.Entities.ProductEntity", "Product")
-                        .WithMany()
+                        .WithMany("CartItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -233,7 +236,7 @@ namespace ECommerceAPI.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("ECommerceAPI.Infrastructure.Entities.ProductEntity", "Product")
-                        .WithMany()
+                        .WithMany("OrderProducts")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -250,6 +253,13 @@ namespace ECommerceAPI.Infrastructure.Migrations
 
             modelBuilder.Entity("ECommerceAPI.Infrastructure.Entities.OrderEntity", b =>
                 {
+                    b.Navigation("OrderProducts");
+                });
+
+            modelBuilder.Entity("ECommerceAPI.Infrastructure.Entities.ProductEntity", b =>
+                {
+                    b.Navigation("CartItems");
+
                     b.Navigation("OrderProducts");
                 });
 

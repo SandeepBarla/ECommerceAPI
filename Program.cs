@@ -49,6 +49,9 @@ builder.Services.AddScoped<CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
 // ✅ Enable CORS
 builder.Services.AddCors(options =>
 {

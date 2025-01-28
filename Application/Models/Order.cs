@@ -16,7 +16,7 @@ namespace ECommerceAPI.Application.Models
 
         // ✅ Store Products as a List instead of a string
         [Required]
-        public List<OrderProduct> Products { get; set; } = new List<OrderProduct>();
+        public List<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
