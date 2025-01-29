@@ -1,46 +1,57 @@
 using AutoMapper;
-using ECommerceAPI.Infrastructure.Context;
+using ECommerceAPI.Application.Interfaces;
 using ECommerceAPI.Application.Models;
-using Microsoft.EntityFrameworkCore;
+using ECommerceAPI.Infrastructure.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ECommerceAPI.Infrastructure.Interfaces;
 
 namespace ECommerceAPI.Application.Services
 {
-    public interface IOrderService
-    {
-        Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId);
-        Task<IEnumerable<Order>> GetAllOrdersAsync();
-    }
-
     public class OrderService : IOrderService
     {
-        private readonly AppDbContext _context;
+        private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
 
-        public OrderService(AppDbContext context, IMapper mapper)
+        public OrderService(IOrderRepository orderRepository, IMapper mapper)
         {
-            _context = context;
+            _orderRepository = orderRepository;
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId)
+        public async Task<Order> CreateOrderAsync(Order order)
         {
-            var orderEntities = await _context.Orders
-                .Where(o => o.UserId == userId)
-                .Include(o => o.OrderProducts) // ✅ Ensure Products are included
-                .ThenInclude(op => op.Product) // ✅ Include actual Product details
-                .ToListAsync();
-            return _mapper.Map<IEnumerable<Order>>(orderEntities);
+            var orderEntity = _mapper.Map<OrderEntity>(order);
+            var createdOrder = await _orderRepository.CreateOrderAsync(orderEntity);
+            return _mapper.Map<Order>(createdOrder);
         }
 
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        public async Task<Order> GetOrderByIdAsync(int id)
         {
-            var orderEntities = await _context.Orders
-                .Include(o => o.OrderProducts) // ✅ Ensure Products are included
-                .ThenInclude(op => op.Product) // ✅ Include actual Product details
-                .ToListAsync();
-            return _mapper.Map<IEnumerable<Order>>(orderEntities);
+            var orderEntity = await _orderRepository.GetOrderByIdAsync(id);
+            if (orderEntity == null) throw new KeyNotFoundException("Order not found");
+            return _mapper.Map<Order>(orderEntity);
+        }
+
+        public async Task<List<Order>> GetOrdersByUserIdAsync(int userId)
+        {
+            var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
+            return _mapper.Map<List<Order>>(orders);
+        }
+
+        public async Task<List<Order>> GetAllOrdersAsync()
+        {
+            var orders = await _orderRepository.GetAllOrdersAsync();
+            return _mapper.Map<List<Order>>(orders);
+        }
+
+        public async Task UpdateOrderStatusAsync(int orderId, string status)
+        {
+            var orderEntity = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (orderEntity == null) throw new KeyNotFoundException("Order not found");
+
+            orderEntity.OrderStatus = status;
+            await _orderRepository.UpdateOrderAsync(orderEntity);
         }
     }
 }

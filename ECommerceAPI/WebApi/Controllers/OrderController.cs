@@ -1,207 +1,80 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ECommerceAPI.Infrastructure.Context;
+using ECommerceAPI.Application.Interfaces;
 using ECommerceAPI.Application.Models;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
-using System.Security.Claims;
-using ECommerceAPI.Application.Services;
-using ECommerceAPI.Infrastructure.Entities;
+using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ECommerceAPI.WebApi.Controllers
 {
-    [Route("api/orders")]
+    [Route("api")]
     [ApiController]
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
-        private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IValidator<OrderCreateRequest> _orderCreateRequestValidator;
+        private readonly IValidator<OrderStatusUpdateRequest> _orderStatusUpdateRequestValidator;
 
-        public OrderController(AppDbContext context, IOrderService orderService, IMapper mapper)
+        public OrderController(
+            IOrderService orderService,
+            IMapper mapper,
+            IValidator<OrderCreateRequest> orderCreateRequestValidator,
+            IValidator<OrderStatusUpdateRequest> orderStatusUpdateRequestValidator)
         {
-            _context = context;
             _orderService = orderService;
             _mapper = mapper;
+            _orderCreateRequestValidator = orderCreateRequestValidator;
+            _orderStatusUpdateRequestValidator = orderStatusUpdateRequestValidator;
         }
 
-        // ✅ Create Order (Fixed DTO Mapping)
         [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] OrderCreateRequest orderDto)
+        [HttpPost("users/{userId}/orders")]
+        public async Task<IActionResult> CreateOrder(int userId, [FromBody] OrderCreateRequest request)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-
-            var order = new Order
-            {
-                UserId = userId,
-                TotalAmount = orderDto.TotalAmount,
-                ShippingAddress = orderDto.ShippingAddress,
-                PaymentStatus = "Pending",
-                OrderStatus = "Processing",
-                OrderDate = DateTime.UtcNow,
-                OrderProducts = orderDto.Products.Select(p => new OrderProduct
-                {
-                    ProductId = p.ProductId,
-                    Quantity = p.Quantity
-                }).ToList()
-            };
-
-            _context.Orders.Add(_mapper.Map<OrderEntity>(order));
-            await _context.SaveChangesAsync();
-
-            var response = new OrderResponse
-            {
-                Id = order.Id,
-                Products = order.OrderProducts.Select(p => new OrderProductResponse
-                {
-                    ProductId = p.ProductId,
-                    Quantity = p.Quantity
-                }).ToList(),
-                TotalAmount = order.TotalAmount,
-                PaymentStatus = order.PaymentStatus,
-                OrderStatus = order.OrderStatus,
-                OrderDate = order.OrderDate,
-                ShippingAddress = order.ShippingAddress,
-                TrackingNumber = order.TrackingNumber
-            };
-
-            return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, response);
+            await _orderCreateRequestValidator.ValidateAndThrowAsync(request);
+            var order = _mapper.Map<Order>(request);
+            order.UserId = userId; 
+            var createdOrder = await _orderService.CreateOrderAsync(order);
+            return CreatedAtAction(nameof(GetOrderById), new { userId, id = createdOrder.Id }, _mapper.Map<OrderResponse>(createdOrder));
         }
 
-        // ✅ Get Orders for Logged-in User (Fixed Mapping)
         [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> GetUserOrders()
-        {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var orders = await _context.Orders
-                .Include(o => o.OrderProducts)
-                .Where(o => o.UserId == userId)
-                .ToListAsync();
-
-            var response = orders.Select(o => new OrderResponse
-            {
-                Id = o.Id,
-                Products = o.OrderProducts.Select(p => new OrderProductResponse
-                {
-                    ProductId = p.ProductId,
-                    Quantity = p.Quantity
-                }).ToList(),
-                TotalAmount = o.TotalAmount,
-                PaymentStatus = o.PaymentStatus,
-                OrderStatus = o.OrderStatus,
-                OrderDate = o.OrderDate,
-                ShippingAddress = o.ShippingAddress,
-                TrackingNumber = o.TrackingNumber
-            });
-
-            return Ok(response);
-        }
-
-        // ✅ Get Order by ID (Fixed Mapping)
-        [Authorize]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrderById(int id)
-        {
-            var order = await _context.Orders
-                .Include(o => o.OrderProducts)
-                .FirstOrDefaultAsync(o => o.Id == id);
-
-            if (order == null)
-                return NotFound("Order not found.");
-
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            if (order.UserId != userId)
-                return Unauthorized("Access denied.");
-
-            var response = new OrderResponse
-            {
-                Id = order.Id,
-                Products = order.OrderProducts.Select(p => new OrderProductResponse
-                {
-                    ProductId = p.ProductId,
-                    Quantity = p.Quantity
-                }).ToList(),
-                TotalAmount = order.TotalAmount,
-                PaymentStatus = order.PaymentStatus,
-                OrderStatus = order.OrderStatus,
-                OrderDate = order.OrderDate,
-                ShippingAddress = order.ShippingAddress,
-                TrackingNumber = order.TrackingNumber
-            };
-
-            return Ok(response);
-        }
-
-        // ✅ Update Order Status (Admin Only)
-        [Authorize(Roles = "Admin")]
-        [HttpPut("{id}/status")]
-        public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] string status)
-        {
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null)
-                return NotFound("Order not found.");
-
-            order.OrderStatus = status;
-            await _context.SaveChangesAsync();
-            return Ok(new { message = "Order status updated", orderId = id, newStatus = status });
-        }
-
-        // ✅ Get Orders by User ID (Admin Only) (Fixed Mapping)
-        [Authorize(Roles = "Admin")]
-        [HttpGet("users/{userId}")]
-        public async Task<IActionResult> GetOrdersByUserId(int userId)
+        [HttpGet("users/{userId}/orders")]
+        public async Task<IActionResult> GetOrders(int userId)
         {
             var orders = await _orderService.GetOrdersByUserIdAsync(userId);
-            if (orders == null || !orders.Any())
-                return NotFound("No orders found for this user.");
-
-            var response = orders.Select(o => new OrderResponse
-            {
-                Id = o.Id,
-                Products = o.OrderProducts.Select(p => new OrderProductResponse
-                {
-                    ProductId = p.ProductId,
-                    Quantity = p.Quantity
-                }).ToList(),
-                TotalAmount = o.TotalAmount,
-                PaymentStatus = o.PaymentStatus,
-                OrderStatus = o.OrderStatus,
-                OrderDate = o.OrderDate,
-                ShippingAddress = o.ShippingAddress,
-                TrackingNumber = o.TrackingNumber
-            });
-
-            return Ok(response);
+            return Ok(_mapper.Map<List<OrderResponse>>(orders));
         }
 
-        // ✅ Get All Orders (Admin Only) (Fixed Mapping)
+        [Authorize]
+        [HttpGet("users/{userId}/orders/{id}")]
+        public async Task<IActionResult> GetOrderById(int userId, int id)
+        {
+            var order = await _orderService.GetOrderByIdAsync(id);
+            if (order.UserId != userId) return Forbid();
+            return Ok(_mapper.Map<OrderResponse>(order));
+        }
+
         [Authorize(Roles = "Admin")]
-        [HttpGet("all")]
+        [HttpGet("orders")]
         public async Task<IActionResult> GetAllOrders()
         {
             var orders = await _orderService.GetAllOrdersAsync();
+            return Ok(_mapper.Map<List<OrderResponse>>(orders));
+        }
 
-            var response = orders.Select(o => new OrderResponse
-            {
-                Id = o.Id,
-                Products = o.OrderProducts.Select(p => new OrderProductResponse
-                {
-                    ProductId = p.ProductId,
-                    Quantity = p.Quantity
-                }).ToList(),
-                TotalAmount = o.TotalAmount,
-                PaymentStatus = o.PaymentStatus,
-                OrderStatus = o.OrderStatus,
-                OrderDate = o.OrderDate,
-                ShippingAddress = o.ShippingAddress,
-                TrackingNumber = o.TrackingNumber
-            });
-
-            return Ok(response);
+        [Authorize]
+        [HttpPatch("users/{userId}/orders/{id}")]
+        public async Task<IActionResult> UpdateOrderStatus(int userId, int id, [FromBody] OrderStatusUpdateRequest request)
+        {
+            await _orderStatusUpdateRequestValidator.ValidateAndThrowAsync(request);
+            await _orderService.UpdateOrderStatusAsync(id, request.Status);
+            return NoContent();
         }
     }
 }

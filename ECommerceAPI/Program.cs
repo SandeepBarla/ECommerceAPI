@@ -57,8 +57,11 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 builder.Services.AddScoped<IValidator<ProductUpsertRequest>, ProductUpsertRequestValidator>();
+builder.Services.AddScoped<IValidator<OrderCreateRequest>, OrderCreateRequestValidator>();
+builder.Services.AddScoped<IValidator<OrderStatusUpdateRequest>, OrderStatusUpdateRequestValidator>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
