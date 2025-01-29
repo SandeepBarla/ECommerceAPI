@@ -29,7 +29,8 @@ namespace ECommerceAPI.WebApi.Middleware
             }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(context, ex);
+                var exception = ex.InnerException ?? ex;
+                await HandleExceptionAsync(context, exception);
             }
         }
 

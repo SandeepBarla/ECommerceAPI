@@ -32,9 +32,9 @@ namespace ECommerceAPI.WebApi.Controllers
         {
             await _productUpsertRequestValidator.ValidateAndThrowAsync(productCreateRequest);
             var product = _mapper.Map<Product>(productCreateRequest);
-            await _productService.CreateProductAsync(product);
+            var createdProduct = await _productService.CreateProductAsync(product);
 
-            var response = _mapper.Map<ProductResponse>(product);
+            var response = _mapper.Map<ProductResponse>(createdProduct);
             return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, response);
         }
 

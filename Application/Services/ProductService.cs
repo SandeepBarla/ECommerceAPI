@@ -31,10 +31,13 @@ namespace ECommerceAPI.Application.Services
             return _mapper.Map<IEnumerable<Product>>(productEntities);
         }
 
-        public async Task CreateProductAsync(Product product)
+        public async Task<Product> CreateProductAsync(Product product)
         {
             var productEntity = _mapper.Map<ProductEntity>(product);
             await _productRepository.CreateAsync(productEntity);
+
+            // Ensure the ID is included
+            return _mapper.Map<Product>(productEntity);
         }
 
         public async Task UpdateProductAsync(Product product)
