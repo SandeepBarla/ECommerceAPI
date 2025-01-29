@@ -1,12 +1,11 @@
 using AutoMapper;
+using ECommerceAPI.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ECommerceAPI.Infrastructure.Context;
 using ECommerceAPI.Application.Models;
-using ECommerceAPI.Infrastructure.Entities;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
+using FluentValidation;
 
 namespace ECommerceAPI.WebApi.Controllers
 {
@@ -14,117 +13,66 @@ namespace ECommerceAPI.WebApi.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IProductService _productService;
+        private readonly IValidator<ProductUpsertRequest> _productUpsertRequestValidator;
 
-        public ProductController(AppDbContext context, IMapper mapper)
+        public ProductController(IMapper mapper, IProductService productService
+        , IValidator<ProductUpsertRequest> productUpsertRequestValidator)
         {
-            _context = context;
             _mapper = mapper;
+            _productService = productService;
+            _productUpsertRequestValidator = productUpsertRequestValidator;
         }
 
-        // ✅ Create Product (Admin Only)
+        // Create Product (Admin Only)
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromBody] ProductCreateRequest productDto)
+        public async Task<IActionResult> CreateProduct([FromBody] ProductUpsertRequest productCreateRequest)
         {
-            var product = new Product
-            {
-                Name = productDto.Name,
-                Description = productDto.Description,
-                Price = productDto.Price,
-                Stock = productDto.Stock,
-                ImageUrl = productDto.ImageUrl
-            };
+            await _productUpsertRequestValidator.ValidateAndThrowAsync(productCreateRequest);
+            var product = _mapper.Map<Product>(productCreateRequest);
+            await _productService.CreateProductAsync(product);
 
-            _context.Products.Add(_mapper.Map<ProductEntity>(product));
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, new ProductResponse
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                Stock = product.Stock,
-                ImageUrl = product.ImageUrl
-            });
+            var response = _mapper.Map<ProductResponse>(product);
+            return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, response);
         }
 
-        // ✅ Get All Products (Public)
+        // Get All Products (Public)
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            var products = await _context.Products.ToListAsync();
-            var response = products.Select(p => new ProductResponse
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                Stock = p.Stock,
-                ImageUrl = p.ImageUrl
-            });
+            var products = await _productService.GetAllProductsAsync();
+            var response = _mapper.Map<IEnumerable<ProductResponse>>(products);
             return Ok(response);
         }
 
-        // ✅ Get Product by ID (Public)
+        // Get Product by ID (Public)
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-                return NotFound("Product not found.");
-
-            return Ok(new ProductResponse
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                Stock = product.Stock,
-                ImageUrl = product.ImageUrl
-            });
+            var product = await _productService.GetProductByIdAsync(id);
+            var response = _mapper.Map<ProductResponse>(product);
+            return Ok(response);
         }
 
-        // ✅ Update Product (Admin Only)
+        // Update Product (Admin Only)
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductCreateRequest productDto)
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductUpsertRequest productUpdateRequest)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-                return NotFound("Product not found.");
-
-            product.Name = productDto.Name;
-            product.Description = productDto.Description;
-            product.Price = productDto.Price;
-            product.Stock = productDto.Stock;
-            product.ImageUrl = productDto.ImageUrl;
-
-            await _context.SaveChangesAsync();
-            return Ok(new ProductResponse
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                Stock = product.Stock,
-                ImageUrl = product.ImageUrl
-            });
+            await _productUpsertRequestValidator.ValidateAndThrowAsync(productUpdateRequest);
+            var product = _mapper.Map<Product>((id, productUpdateRequest));
+            await _productService.UpdateProductAsync(product);
+            return Ok(_mapper.Map<ProductResponse>(product));
         }
 
-        // ✅ Delete Product (Admin Only)
+        // Delete Product (Admin Only)
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-                return NotFound("Product not found.");
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            await _productService.DeleteProductAsync(id);
             return Ok(new { message = "Product deleted successfully." });
         }
     }

@@ -3,7 +3,13 @@ using ECommerceAPI.Infrastructure.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using ECommerceAPI.Application.Interfaces;
 using ECommerceAPI.Application.Services;
+using ECommerceAPI.Infrastructure.Interfaces;
+using ECommerceAPI.Infrastructure.Repositories;
+using ECommerceAPI.WebApi.DTOs.RequestModels;
+using ECommerceAPI.WebApi.Validators;
+using FluentValidation;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +54,11 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddScoped<IValidator<ProductUpsertRequest>, ProductUpsertRequestValidator>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -104,6 +115,9 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+// Register Global Exception Handling Middleware
+app.UseMiddleware<ECommerceAPI.WebApi.Middleware.ExceptionHandlingMiddleware>();
 
 // ✅ Exception Handling Middleware (Prevents crashes)
 app.UseExceptionHandler("/error");
