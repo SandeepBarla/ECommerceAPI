@@ -1,65 +1,55 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using ECommerceAPI.Application.Services;
+using AutoMapper;
+using ECommerceAPI.Application.Interfaces;
+using ECommerceAPI.Application.Models;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
+using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceAPI.WebApi.Controllers
 {
-    [Authorize]  // ✅ Requires authentication
-    [Route("api/cart")]
+    [Route("api/users/{userId}/cart")]
     [ApiController]
+    [Authorize] // Ensure authentication for cart operations
     public class CartController : ControllerBase
     {
-        private readonly CartService _cartService;
+        private readonly ICartService _cartService;
+        private readonly IMapper _mapper;
+        private readonly IValidator<CartAddOrUpdateItemRequest> _cartAddOrUpdateItemValidator;
 
-        public CartController(CartService cartService)
+        public CartController(ICartService cartService, IMapper mapper, IValidator<CartAddOrUpdateItemRequest> cartAddOrUpdateItemValidator)
         {
             _cartService = cartService;
+            _mapper = mapper;
+            _cartAddOrUpdateItemValidator = cartAddOrUpdateItemValidator;
         }
 
-        private int GetUserId()
-        {
-            return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        }
-
+        // Get cart details for a user
         [HttpGet]
-        public async Task<ActionResult<CartResponse>> GetCart()
+        public async Task<IActionResult> GetCart(int userId)
         {
-            var userId = GetUserId();
-            var cart = await _cartService.GetCart(userId);
-            return Ok(cart);
+            var cart = await _cartService.GetCartByUserIdAsync(userId);
+            var response = _mapper.Map<CartResponse>(cart);
+            return Ok(response);
         }
 
+        // Add or update an item in the cart
         [HttpPost]
-        public async Task<IActionResult> UpsertCartItem([FromBody] CartUpsertRequest request)
+        public async Task<IActionResult> AddOrUpdateItem(int userId, [FromBody] CartAddOrUpdateItemRequest request)
         {
-            int userId = GetUserId();
-            await _cartService.UpsertCartItem(userId, request);
-
-            return Ok(new 
-            { 
-                message = request.Quantity == 0 ? "Item removed from cart" : "Cart updated"
-            });
+            await _cartAddOrUpdateItemValidator.ValidateAndThrowAsync(request);
+            var cartItem = _mapper.Map<CartItem>(request);
+            await _cartService.AddOrUpdateCartItemAsync(userId, cartItem);
+            return Ok(new { Message = "Cart updated successfully" });
         }
 
+        // Delete entire cart
         [HttpDelete]
-        public async Task<IActionResult> ClearCart()
+        public async Task<IActionResult> ClearCart(int userId)
         {
-            int userId = GetUserId();
-            await _cartService.ClearCart(userId);
-            return Ok(new { message = "Cart cleared" });
+            await _cartService.ClearCartAsync(userId);
+            return NoContent();
         }
-        
-        [HttpPatch]
-        public async Task<IActionResult> BulkUpdateCart([FromBody] CartBulkUpdateRequest request)
-        {
-            int userId = GetUserId();
-            await _cartService.BulkUpdateCart(userId, request);
-            return Ok(new { message = "Cart updated successfully" });
-        }
-
-
     }
 }

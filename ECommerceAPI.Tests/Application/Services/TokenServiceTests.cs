@@ -1,5 +1,4 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using ECommerceAPI.Application.Models;
 using ECommerceAPI.Application.Services;

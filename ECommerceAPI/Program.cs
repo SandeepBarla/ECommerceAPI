@@ -52,19 +52,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // ✅ Add Application Services
-builder.Services.AddScoped<CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 builder.Services.AddScoped<IValidator<ProductUpsertRequest>, ProductUpsertRequestValidator>();
 builder.Services.AddScoped<IValidator<OrderCreateRequest>, OrderCreateRequestValidator>();
 builder.Services.AddScoped<IValidator<OrderStatusUpdateRequest>, OrderStatusUpdateRequestValidator>();
+builder.Services.AddScoped<IValidator<UserLoginRequest>, UserLoginRequestValidator>();
+builder.Services.AddScoped<IValidator<UserRegisterRequest>, UserRegisterRequestValidator>();
+builder.Services.AddScoped<IValidator<CartAddOrUpdateItemRequest>, CartAddOrUpdateItemRequestValidator>();
+
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

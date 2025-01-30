@@ -8,7 +8,6 @@ namespace ECommerceAPI.Application.Models
 {
     public class Order
     {
-        [Key]
         public int Id { get; set; }
         public int UserId { get; set; }
         public List<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
