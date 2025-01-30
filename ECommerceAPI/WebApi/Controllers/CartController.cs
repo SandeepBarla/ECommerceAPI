@@ -27,7 +27,7 @@ namespace ECommerceAPI.WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<CartResponse>> GetCart()
         {
-            int userId = GetUserId();
+            var userId = GetUserId();
             var cart = await _cartService.GetCart(userId);
             return Ok(cart);
         }

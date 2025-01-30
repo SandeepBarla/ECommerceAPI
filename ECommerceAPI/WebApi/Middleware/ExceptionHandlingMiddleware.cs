@@ -57,12 +57,17 @@ namespace ECommerceAPI.WebApi.Middleware
 
                 case KeyNotFoundException _:  // 🔹 Handle 404 Not Found
                     response.StatusCode = (int)HttpStatusCode.NotFound;
-                    errorResponse = new { message = "Resource not found" };
+                    errorResponse = new { message = exception.Message ?? "Resource not found" };
                     break;
 
                 case UnauthorizedAccessException _: // 🔹 Handle 401 Unauthorized
                     response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    errorResponse = new { message = "Unauthorized access" };
+                    errorResponse = new { message = exception.Message ?? "Unauthorized access" };
+                    break;
+                
+                case InvalidOperationException :
+                    response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    errorResponse = new { message = exception.Message ?? "Please check the input" };
                     break;
 
                 default:  // 🔹 Handle 500 Internal Server Error (General Exception)

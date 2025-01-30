@@ -7,6 +7,7 @@ using ECommerceAPI.Application.Interfaces;
 using ECommerceAPI.Application.Services;
 using ECommerceAPI.Infrastructure.Interfaces;
 using ECommerceAPI.Infrastructure.Repositories;
+using ECommerceAPI.Infrastructure.Repositories.Interfaces;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.Validators;
 using FluentValidation;
@@ -44,7 +45,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(key),
-            ClockSkew = TimeSpan.Zero // 🔥 Ensures tokens expire exactly on time
+            ClockSkew = TimeSpan.Zero // Ensures tokens expire exactly on time
         };
     });
 
@@ -55,9 +56,11 @@ builder.Services.AddScoped<CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IValidator<ProductUpsertRequest>, ProductUpsertRequestValidator>();
 builder.Services.AddScoped<IValidator<OrderCreateRequest>, OrderCreateRequestValidator>();
