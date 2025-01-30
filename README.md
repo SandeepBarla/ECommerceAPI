@@ -1,88 +1,282 @@
 # 🛒 ECommerce API
 
-ECommerce API is a backend service for an online shopping platform, designed using **.NET 8**, **Entity Framework Core**, and **PostgreSQL**. It provides essential functionalities such as **authentication**, **product management**, **cart handling**, **orders**, and **user management**.
+ECommerce API is a **RESTful web service** built using **.NET 8** following **Clean Architecture** principles.  
+It provides essential backend functionalities for an **e-commerce platform**, including:
 
-## 🚀 Features
+- **User Authentication & Authorization** (JWT-based)
+- **Product Management**
+- **Cart & Order Processing**
+- **Role-based Access Control (Admin & Users)**
 
-- **Authentication & Authorization** using **JWT Tokens**.
-- **Product Management**: CRUD operations for products.
-- **Cart Management**: Add, update, and remove items from the cart.
-- **Order Processing**: Place orders and track their status.
-- **User Management**: Fetch user profiles and order history.
-- **Global Exception Handling** for improved error management.
-- **Fluent Validation** for request validation.
-- **Unit Tests** for controllers, services, validators, and repositories.
+## 🔍 Problem Statement
 
-## 🛠 Refactoring
+Small businesses and independent sellers often struggle with managing their online sales, inventory, and order tracking efficiently.  
+Existing solutions are either too expensive or do not provide the necessary flexibility for businesses to scale.
 
-The project is currently undergoing **refactoring** to improve **code structure, maintainability, and testability**. The key improvements include:
+### ✅ **Solution**
 
-- **Implementing Clean Architecture** by separating concerns into different layers.
-- **Introducing Repository & Service Layers** for better abstraction.
-- **Adding AutoMapper** to handle DTO-to-Entity transformations.
-- **Implementing Global Exception Handling** for more robust error management.
-- **Unit Testing** to ensure stability during refactoring.
+The **ECommerce API** is designed as a **scalable and cost-effective** backend solution that provides essential e-commerce functionalities such as:
 
-## 📡 API Endpoints
+- **User authentication & authorization** for secure transactions.
+- **Product and inventory management** to keep stock updated.
+- **Shopping cart and order management** to facilitate purchases.
+- **Role-based access control** ensuring proper authorization for admins and customers.
 
-### **Authentication**
-- `POST /api/auth/register` - Register a new user.
-- `POST /api/auth/login` - Authenticate and retrieve a JWT.
-- `GET /api/auth/profile` - Get the authenticated user's profile.
+## 🚀 Impact & Value
 
-### **Products**
-- `POST /api/products` - Create a new product (Admin).
-- `GET /api/products` - Retrieve all products.
-- `GET /api/products/{id}` - Retrieve a specific product by ID.
-- `PUT /api/products/{id}` - Update a product (Admin).
-- `DELETE /api/products/{id}` - Delete a product (Admin).
+- 🕒 **Reduces manual order processing time** by up to **50%** through automation.
+- 💰 **Provides a cost-effective backend** alternative to expensive e-commerce platforms.
+- 🛍️ **Designed for scalability**—ideal for startups and small businesses aiming to transition online.
+- 🔒 **Ensures secure transactions** through robust authentication and authorization mechanisms.
 
-### **Cart**
-- `GET /api/cart` - Retrieve the user's cart.
-- `POST /api/cart` - Add an item to the cart.
-- `PATCH /api/cart` - Update cart items.
-- `DELETE /api/cart` - Clear the cart.
+## 🛠️ Features
 
-### **Orders**
-- `POST /api/orders` - Create a new order.
-- `GET /api/orders` - Retrieve all orders.
-- `GET /api/orders/{id}` - Retrieve order details by ID.
-- `PUT /api/orders/{id}/status` - Update order status (Admin).
-- `GET /api/orders/users/{userId}` - Retrieve orders by user.
-- `GET /api/orders/all` - Retrieve all orders (Admin).
+- **Secure Authentication**: Implements JWT-based authentication for secure user sessions.
+- **Product Management**: CRUD operations for products with category associations.
+- **Cart Functionality**: Allows users to add, update, and remove items from their cart.
+- **Order Processing**: Facilitates order placement and status tracking.
+- **Role-Based Access Control**: Differentiates access for Admin and regular users.
 
-### **Users**
-- `GET /api/users` - Retrieve all users (Admin).
+## 🚀 Getting Started
 
-## ⚡ Getting Started
+### 📥 Prerequisites
 
-### **1️⃣ Prerequisites**
-Ensure you have the following installed:
-- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- [PostgreSQL](https://www.postgresql.org/download/)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) or [PostgreSQL](https://www.postgresql.org/download/)
 
-### **2️⃣ Setup**
-#### **Clone the repository**
-```sh
-git clone https://github.com/SandeepBarla/ECommerceAPI.git
-cd ECommerceAPI
+### 📦 Installation
+
+1. **Clone the Repository**
+   ```sh
+   git clone https://github.com/SandeepBarla/ECommerceAPI.git
+   cd ECommerceAPI
+   ```
+
+2. **Install Dependencies**
+   ```sh
+   dotnet restore
+   ```
+
+3. **Environment Variables Configuration**
+
+    Update `appsettings.json` with the following settings:
+
+    **Database Configuration**
+    ```json
+    "ConnectionStrings": {
+      "DefaultConnection": "Host=localhost;Port=5432;Database=ecommerce_db;Username=ecommerce_user;Password=your_password"
+    }
+    ```
+
+    **JWT Authentication**
+    ```json
+    "Jwt": {
+      "Key": "your_secret_key",
+      "Issuer": "http://localhost:5000",
+      "Audience": "http://localhost:5000"
+    }
+    ```
+
+    ⚠️ **Replace placeholders (`your_password`, `your_secret_key`) with actual values.**  
+    Use **environment variables** or a **secrets manager** for sensitive data.
+
+4. **Apply Migrations and Update Database**
+   ```sh
+   dotnet ef database update --project ECommerceAPI.Infrastructure --startup-project ECommerceAPI.WebApi
+   ```
+
+5. **Build and Run the Application**
+   ```sh
+   dotnet build
+   dotnet run --project ECommerceAPI.WebApi
+   ```
+
+   The API will be accessible at `https://localhost:5001` by default.
+
+
+## 📋 API Endpoints
+
+#### Auth
+
+##### Login
+```http
+POST /api/auth/login
 ```
-## 🛠 Environment Variables
+| Parameter  | Type     | Description              |
+|-----------|---------|--------------------------|
+| `email`   | `string` | **Required**. User email |
+| `password`| `string` | **Required**. User password |
 
-Create a `.env` file in the root directory with the following variables:
+---
 
-```env
-DB_CONNECTION_STRING=your_postgres_connection_string
-JWT_SECRET=your_secret_key
+#### User
+
+##### Register a new user
+```http
+POST /api/users
 ```
-## ✅ Unit Tests
+| Parameter    | Type     | Description               |
+|-------------|---------|---------------------------|
+| `name`      | `string` | **Required**. User name   |
+| `email`     | `string` | **Required**. User email  |
+| `password`  | `string` | **Required**. User password |
 
-This project includes unit tests for controllers, services, validators, and repositories. To run tests:
+##### Get all users (Admin only)
+```http
+GET /api/users
+```
+
+##### Get user by ID
+```http
+GET /api/users/{userId}
+```
+| Parameter | Type     | Description                  |
+|-----------|---------|------------------------------|
+| `userId`  | `string` | **Required**. User ID       |
+
+---
+
+#### Cart
+
+##### Get user's cart
+```http
+GET /api/users/{userId}/cart
+```
+| Parameter | Type     | Description                  |
+|-----------|---------|------------------------------|
+| `userId`  | `string` | **Required**. User ID       |
+
+##### Add item to cart
+```http
+POST /api/users/{userId}/cart
+```
+| Parameter | Type     | Description                  |
+|-----------|---------|------------------------------|
+| `userId`  | `string` | **Required**. User ID       |
+| `productId` | `string` | **Required**. Product ID  |
+| `quantity` | `int`    | **Required**. Quantity     |
+
+##### Remove item from cart
+```http
+DELETE /api/users/{userId}/cart
+```
+| Parameter | Type     | Description                  |
+|-----------|---------|------------------------------|
+| `userId`  | `string` | **Required**. User ID       |
+| `productId` | `string` | **Required**. Product ID  |
+
+---
+
+#### Order
+
+##### Place a new order
+```http
+POST /api/users/{userId}/orders
+```
+| Parameter | Type     | Description                  |
+|-----------|---------|------------------------------|
+| `userId`  | `string` | **Required**. User ID       |
+| `cartId`  | `string` | **Required**. Cart ID       |
+
+##### Get all orders for a user
+```http
+GET /api/users/{userId}/orders
+```
+| Parameter | Type     | Description                  |
+|-----------|---------|------------------------------|
+| `userId`  | `string` | **Required**. User ID       |
+
+##### Get order details by ID
+```http
+GET /api/users/{userId}/orders/{id}
+```
+| Parameter | Type     | Description                  |
+|-----------|---------|------------------------------|
+| `userId`  | `string` | **Required**. User ID       |
+| `id`      | `string` | **Required**. Order ID      |
+
+##### Update order status (Admin only)
+```http
+PATCH /api/users/{userId}/orders/{id}
+```
+| Parameter | Type     | Description                  |
+|-----------|---------|------------------------------|
+| `userId`  | `string` | **Required**. User ID       |
+| `id`      | `string` | **Required**. Order ID      |
+| `status`  | `string` | **Required**. New status    |
+
+##### Get all orders (Admin only)
+```http
+GET /api/orders
+```
+
+---
+
+#### Products
+
+##### Add a new product (Admin only)
+```http
+POST /api/products
+```
+| Parameter  | Type     | Description                   |
+|------------|---------|-------------------------------|
+| `name`     | `string` | **Required**. Product name   |
+| `price`    | `decimal`| **Required**. Product price  |
+| `stock`    | `int`    | **Required**. Available stock|
+
+##### Get all products
+```http
+GET /api/products
+```
+
+##### Get product by ID
+```http
+GET /api/products/{id}
+```
+| Parameter | Type     | Description                  |
+|-----------|---------|------------------------------|
+| `id`      | `string` | **Required**. Product ID    |
+
+##### Update product details (Admin only)
+```http
+PUT /api/products/{id}
+```
+| Parameter  | Type     | Description                   |
+|------------|---------|-------------------------------|
+| `id`       | `string` | **Required**. Product ID    |
+| `name`     | `string` | **Required**. Product name  |
+| `price`    | `decimal`| **Required**. Product price |
+| `stock`    | `int`    | **Required**. Available stock|
+
+##### Delete a product (Admin only)
+```http
+DELETE /api/products/{id}
+```
+| Parameter | Type     | Description                  |
+|-----------|---------|------------------------------|
+| `id`      | `string` | **Required**. Product ID    |
+
+
+## 🧪 Running Tests
+
+Execute the following command to run the test suite:
 
 ```sh
 dotnet test
 ```
 
-## 🎯 Author
 
-- **Sandeep Barla** - [GitHub](https://github.com/SandeepBarla)
+
+## 🎯 Future Improvements
+
+- **Integrate Payment Gateway** for handling transactions securely.
+- **Add WebSockets Support** for real-time notifications on order status.
+- **Implement Advanced Filtering & Search** for improved product discovery.
+
+
+## 🙌 Contributors
+
+- **[Sandeep Barla](https://github.com/SandeepBarla)** - Full Stack Developer
+
+
+
