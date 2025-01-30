@@ -1,8 +1,10 @@
-using Microsoft.EntityFrameworkCore;
 using ECommerceAPI.Infrastructure.Context;
-using ECommerceAPI.Infrastructure.Repositories;
 using ECommerceAPI.Infrastructure.Entities;
+using ECommerceAPI.Infrastructure.Repositories;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+
+namespace ECommerceAPI.Tests.Infrastructure.Repositories;
 
 public class CartRepositoryTests
 {
