@@ -34,9 +34,9 @@ namespace ECommerceAPI.WebApi.Controllers
         {
             await _userRegisterRequestValidator.ValidateAndThrowAsync(request);
             var user = _mapper.Map<User>(request);
-            await _userService.RegisterUserAsync(user, request.Password);
+            user = await _userService.RegisterUserAsync(user, request.Password);
             var token = _tokenService.GenerateToken(user.Id, user.Email, user.Role);
-            var authResponse = new AuthResponse { Role = user.Role, Token = token };
+            var authResponse = new AuthResponse { UserId = user.Id, Role = user.Role, Token = token };
             return CreatedAtAction(nameof(GetUserById), new { userId = user.Id }, authResponse);
         }
 

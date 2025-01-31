@@ -19,7 +19,7 @@ namespace ECommerceAPI.Application.Services
             _mapper = mapper;
         }
 
-        public async Task RegisterUserAsync(User user, string password)
+        public async Task<User> RegisterUserAsync(User user, string password)
         {
             var existingUserEntity = await _userRepository.GetByEmailAsync(user.Email);
             if (existingUserEntity != null)
@@ -27,8 +27,9 @@ namespace ECommerceAPI.Application.Services
             
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
             user.Role = "User"; // Default role
-
-            await _userRepository.CreateAsync(_mapper.Map<UserEntity>(user));
+            var userEntity = _mapper.Map<UserEntity>(user);
+            await _userRepository.CreateAsync(userEntity);
+            return _mapper.Map<User>(userEntity);
         }
 
         public async Task<User> GetUserByIdAsync(int userId)

@@ -29,7 +29,7 @@ namespace ECommerceAPI.WebApi.Controllers
             var user = await _userService.ValidateUserCredentialsAsync(loginRequest.Email, loginRequest.Password);
 
             var token = _tokenService.GenerateToken(user.Id, user.Email, user.Role);
-            return Ok(new AuthResponse { Token = token, Role = user.Role });
+            return Ok(new AuthResponse { UserId = user.Id, Token = token, Role = user.Role });
         }
     }
 }
