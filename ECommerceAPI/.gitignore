@@ -1,0 +1,39 @@
+# Ignore build and binary files
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.so
+*.dylib
+*.lock
+*.log
+
+# Ignore user settings and IDE-specific files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# macOS and Linux
+.DS_Store
+*.swp
+
+# Rider / JetBrains
+*.iml
+.idea/
+*.sublime-workspace
+
+# Node.js (if frontend exists)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment Variables
+.env
+.env.local
+secrets.json
+appsettings.json
+appsettings.Development.json
