@@ -36,7 +36,7 @@ public class UserControllerTests : TestBase
             .ReturnsAsync(new ValidationResult());
 
         _userServiceMock.Setup(svc => svc.RegisterUserAsync(It.IsAny<User>(), request.Password))
-            .Returns(Task.CompletedTask);
+            .ReturnsAsync(user);
 
         _tokenServiceMock.Setup(ts => ts.GenerateToken(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
             .Returns(token);
