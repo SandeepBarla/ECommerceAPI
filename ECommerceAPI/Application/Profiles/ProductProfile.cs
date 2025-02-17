@@ -17,9 +17,15 @@ namespace ECommerceAPI.Application.Profiles
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Request.Description))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Request.Price))
                 .ForMember(dest => dest.Stock, opt => opt.MapFrom(src => src.Request.Stock))
-                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Request.ImageUrl));
+                .ForMember(dest => dest.Media, opt => opt.MapFrom(src => src.Request.Media));
             CreateMap<ProductEntity, Product>().ReverseMap();
             CreateMap<Product, ProductResponse>();
+            CreateMap<Product, ProductListResponse>()
+                .ForMember(dest => dest.PrimaryImageUrl, opt =>
+                    opt.MapFrom(src => src.Media.FirstOrDefault().MediaUrl));
+            CreateMap<ProductMediaRequest, ProductMedia>();
+            CreateMap<ProductMedia, ProductMediaResponse>();
+            CreateMap<ProductMediaEntity, ProductMedia>().ReverseMap();
         }
     }
 }

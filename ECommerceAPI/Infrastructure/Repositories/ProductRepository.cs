@@ -14,14 +14,28 @@ namespace ECommerceAPI.Infrastructure.Repositories
             _context = context;
         }
 
+
         public async Task<ProductEntity?> GetByIdAsync(int id)
         {
-            return await _context.Products.FindAsync(id);
+            return await _context.Products
+                .Include(p => p.Media.OrderBy(m => m.OrderIndex)) // ✅ Include related media
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<IEnumerable<ProductEntity>> GetAllAsync()
         {
-            return await _context.Products.ToListAsync();
+            return await _context.Products
+                .Select(p => new ProductEntity
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    Stock = p.Stock,
+                    Media = p.Media
+                        .Where(m => m.OrderIndex == 1) // ✅ Fetch only the media with OrderIndex = 1
+                        .ToList()
+                })
+                .ToListAsync();
         }
 
         public async Task CreateAsync(ProductEntity product)

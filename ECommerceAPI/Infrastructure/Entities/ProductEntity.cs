@@ -7,6 +7,7 @@ namespace ECommerceAPI.Infrastructure.Entities
         public string Description { get; set; }
         public decimal Price { get; set; }
         public int Stock { get; set; }
-        public string ImageUrl { get; set; }
+        
+        public ICollection<ProductMediaEntity> Media { get; set; } = new List<ProductMediaEntity>();
     }
 }

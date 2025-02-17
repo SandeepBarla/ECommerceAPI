@@ -12,6 +12,7 @@ namespace ECommerceAPI.Infrastructure.Context
         // Define DbSets for each entity
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
+        public DbSet<ProductMediaEntity> ProductMedia { get; set; }
         public DbSet<OrderEntity> Orders { get; set; }
         public DbSet<OrderProductEntity> OrderProducts { get; set; }
         public DbSet<CartEntity> Carts { get; set; }
@@ -42,6 +43,12 @@ namespace ECommerceAPI.Infrastructure.Context
                 .HasMany(o => o.OrderProducts)
                 .WithOne(op => op.Order)
                 .HasForeignKey(op => op.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<ProductEntity>()
+                .HasMany(p => p.Media)
+                .WithOne(m => m.Product)
+                .HasForeignKey(m => m.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
             
         }

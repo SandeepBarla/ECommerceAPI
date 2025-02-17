@@ -43,7 +43,7 @@ namespace ECommerceAPI.WebApi.Controllers
         public async Task<IActionResult> GetAllProducts()
         {
             var products = await _productService.GetAllProductsAsync();
-            var response = _mapper.Map<IEnumerable<ProductResponse>>(products);
+            var response = _mapper.Map<IEnumerable<ProductListResponse>>(products);
             return Ok(response);
         }
 

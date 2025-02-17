@@ -46,7 +46,7 @@ namespace ECommerceAPI.Application.Services
             if (existingProductEntity == null) throw new KeyNotFoundException("Product not found");
             // instead of creating new entity, update the tracked entity
             _mapper.Map(product, existingProductEntity);
-            await _productRepository.UpdateAsync(_mapper.Map<ProductEntity>(existingProductEntity));
+            await _productRepository.UpdateAsync(existingProductEntity);
         }
 
         public async Task DeleteProductAsync(int id)
