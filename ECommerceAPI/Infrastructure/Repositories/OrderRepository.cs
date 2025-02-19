@@ -1,10 +1,6 @@
-using ECommerceAPI.Application.Interfaces;
 using ECommerceAPI.Infrastructure.Context;
 using ECommerceAPI.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ECommerceAPI.Infrastructure.Interfaces;
 
 namespace ECommerceAPI.Infrastructure.Repositories
