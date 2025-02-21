@@ -8,7 +8,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using ECommerceAPI.Application.Models;
 using ECommerceAPI.Tests.Common;
-
+namespace ECommerceAPI.Tests.WebApi.Controllers;
 public class UserControllerTests : TestBase
 {
     private readonly Mock<IUserService> _userServiceMock;

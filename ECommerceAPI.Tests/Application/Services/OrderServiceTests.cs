@@ -10,7 +10,7 @@ using ECommerceAPI.Application.Models;
 using ECommerceAPI.Application.Services;
 using ECommerceAPI.Infrastructure.Entities;
 using ECommerceAPI.Infrastructure.Interfaces;
-
+namespace ECommerceAPI.Tests.Application.Services;
 public class OrderServiceTests
 {
     private readonly Mock<IOrderRepository> _orderRepositoryMock;

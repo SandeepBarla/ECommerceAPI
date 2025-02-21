@@ -1,8 +1,4 @@
-using Xunit;
 using Moq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using AutoMapper;
 using ECommerceAPI.Application.Interfaces;
 using ECommerceAPI.Application.Models;
 using ECommerceAPI.Application.Services;
@@ -10,7 +6,7 @@ using ECommerceAPI.Infrastructure.Entities;
 using ECommerceAPI.Infrastructure.Repositories.Interfaces;
 using ECommerceAPI.Tests.Common;
 using FluentAssertions;
-
+namespace ECommerceAPI.Tests.Application.Services;
 public class UserServiceTests : TestBase
 {
     private readonly UserService _userService;

@@ -7,7 +7,7 @@ using ECommerceAPI.WebApi.DTOs.ResponseModels;
 using FluentValidation;
 using FluentValidation.Results;
 using ECommerceAPI.Application.Models;
-
+namespace ECommerceAPI.Tests.WebApi.Controllers;
 public class AuthControllerTests
 {
     private readonly Mock<IUserService> _userServiceMock;

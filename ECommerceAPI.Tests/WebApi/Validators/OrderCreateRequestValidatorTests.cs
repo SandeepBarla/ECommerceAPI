@@ -3,7 +3,7 @@ using FluentValidation.TestHelper;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.Validators;
 using System.Collections.Generic;
-
+namespace ECommerceAPI.Tests.WebApi.Validators;
 public class OrderCreateRequestValidatorTests
 {
     private readonly OrderCreateRequestValidator _validator;

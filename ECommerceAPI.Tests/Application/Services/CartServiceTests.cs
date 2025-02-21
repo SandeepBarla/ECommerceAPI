@@ -6,6 +6,7 @@ using ECommerceAPI.Application.Services;
 using ECommerceAPI.Infrastructure.Entities;
 using ECommerceAPI.Tests.Common;
 
+namespace ECommerceAPI.Tests.Application.Services;
 public class CartServiceTests : TestBase
 {
     private readonly Mock<ICartRepository> _cartRepositoryMock;

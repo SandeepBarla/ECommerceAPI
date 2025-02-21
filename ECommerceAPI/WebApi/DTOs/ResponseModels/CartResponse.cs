@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace ECommerceAPI.WebApi.DTOs.ResponseModels
 {
     public class CartResponse

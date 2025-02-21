@@ -2,7 +2,7 @@ using FluentValidation.TestHelper;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.Validators;
 using ECommerceAPI.Application.Models.Enums;
-
+namespace ECommerceAPI.Tests.WebApi.Validators;
 public class ProductUpsertRequestValidatorTests
 {
     private readonly ProductUpsertRequestValidator _validator;

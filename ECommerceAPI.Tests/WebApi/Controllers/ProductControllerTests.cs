@@ -9,7 +9,7 @@ using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
 using ECommerceAPI.Application.Models;
 using ECommerceAPI.Application.Models.Enums;
-
+namespace ECommerceAPI.Tests.WebApi.Controllers;
 public class ProductControllerTests
 {
     private readonly Mock<IProductService> _productServiceMock;

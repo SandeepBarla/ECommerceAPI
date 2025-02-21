@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
 using ECommerceAPI.Application.Models;
 using ECommerceAPI.Application.Services;
-
+namespace ECommerceAPI.Tests.Application.Services;
 public class TokenServiceTests
 {
     private readonly TokenService _tokenService;

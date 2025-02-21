@@ -11,7 +11,7 @@ using ECommerceAPI.WebApi.DTOs.ResponseModels;
 using ECommerceAPI.Application.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+namespace ECommerceAPI.Tests.WebApi.Controllers;
 public class OrderControllerTests
 {
     private readonly Mock<IOrderService> _orderServiceMock;

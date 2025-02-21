@@ -19,6 +19,7 @@ namespace ECommerceAPI.Infrastructure.Repositories
             var cartEntity = await _context.Carts
                 .Include(c => c.CartItems)
                 .ThenInclude(ci => ci.Product)
+                .ThenInclude(p => p.Media)
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
             return cartEntity;

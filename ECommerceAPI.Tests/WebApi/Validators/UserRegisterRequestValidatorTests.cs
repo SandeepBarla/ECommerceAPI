@@ -1,8 +1,7 @@
-using Xunit;
 using FluentValidation.TestHelper;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.Validators;
-
+namespace ECommerceAPI.Tests.WebApi.Validators;
 public class UserRegisterRequestValidatorTests
 {
     private readonly UserRegisterRequestValidator _validator;

@@ -8,7 +8,7 @@ using ECommerceAPI.Application.Models;
 using FluentValidation;
 using FluentValidation.Results;
 using ECommerceAPI.Tests.Common;
-
+namespace ECommerceAPI.Tests.WebApi.Controllers;
 public class CartControllerTests : TestBase
 {
     private readonly Mock<ICartService> _cartServiceMock;
