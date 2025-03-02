@@ -13,6 +13,5 @@ namespace ECommerceAPI.Infrastructure.Entities
         public CartEntity? Cart { get; set; }
         
         // ✅ User's Favorite Products
-        // public List<FavoriteEntity> Favorites { get; set; } = new();
-    }
+        public ICollection<FavoriteEntity> Favorites { get; set; } = new List<FavoriteEntity>();    }
 }

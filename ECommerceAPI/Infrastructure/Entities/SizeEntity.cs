@@ -10,7 +10,7 @@ namespace ECommerceAPI.Infrastructure.Entities
         // ✅ Sorting Order for Display
         public int SortOrder { get; set; } = 1;
 
-        // ✅ Navigation Property (Many-to-Many)
-        // public ICollection<ProductEntity> Products { get; set; } = new List<ProductEntity>();
+        // ✅ Navigation Property (One-to-Many)
+        public ICollection<ProductEntity> Products { get; set; } = new List<ProductEntity>();
     }
 }
