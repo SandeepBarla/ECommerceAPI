@@ -18,6 +18,15 @@ namespace ECommerceAPI.Infrastructure.Context
         public DbSet<CartEntity> Carts { get; set; }
         public DbSet<CartItemEntity> CartItems { get; set; }
 
+        // ✅ DbSet for Categories
+        public DbSet<CategoryEntity> Categories { get; set; }
+
+        // ✅ DbSet for Sizes
+        public DbSet<SizeEntity> Sizes { get; set; }
+
+        // ✅ DbSet for Favorites
+        public DbSet<FavoriteEntity> Favorites { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Ensure each user has only one cart
@@ -50,6 +59,32 @@ namespace ECommerceAPI.Infrastructure.Context
                 .WithOne(m => m.Product)
                 .HasForeignKey(m => m.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            // // ✅ Many-to-Many Configuration for Favorites
+            // modelBuilder.Entity<FavoriteEntity>()
+            //     .HasKey(f => new { f.UserId, f.ProductId });
+            //
+            // modelBuilder.Entity<FavoriteEntity>()
+            //     .HasOne(f => f.Product)
+            //     .WithMany(p => p.Favorites)
+            //     .HasForeignKey(f => f.ProductId);
+            //
+            // modelBuilder.Entity<FavoriteEntity>()
+            //     .HasOne(f => f.User)
+            //     .WithMany()
+            //     .HasForeignKey(f => f.UserId);
+            //
+            // ✅ One-to-Many Relationship for Category
+            // modelBuilder.Entity<ProductEntity>()
+            //     .HasOne(p => p.Category)
+            //     .WithMany(c => c.Products)
+            //     .HasForeignKey(p => p.CategoryId);
+            
+            // ✅ One-to-Many Relationship for Size
+            // modelBuilder.Entity<ProductEntity>()
+            //     .HasOne(p => p.Size)
+            //     .WithMany(s => s.Products)
+            //     .HasForeignKey(p => p.SizeId);
             
         }
     }

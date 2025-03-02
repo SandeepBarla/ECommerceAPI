@@ -11,5 +11,8 @@ namespace ECommerceAPI.Infrastructure.Entities
         // Navigation Properties
         public ICollection<OrderEntity> Orders { get; set; }
         public CartEntity? Cart { get; set; }
+        
+        // ✅ User's Favorite Products
+        // public List<FavoriteEntity> Favorites { get; set; } = new();
     }
 }
