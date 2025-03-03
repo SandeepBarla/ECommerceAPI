@@ -4,5 +4,6 @@ namespace ECommerceAPI.WebApi.DTOs.ResponseModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int SortOrder { get; set; }
     }
 }

@@ -4,8 +4,9 @@ namespace ECommerceAPI.Infrastructure.Interfaces
 {
     public interface IFavoriteRepository
     {
-        Task AddFavoriteAsync(int userId, int productId);
-        Task RemoveFavoriteAsync(int userId, int productId);
+        Task AddFavoriteAsync(FavoriteEntity favoriteEntity);
+        Task RemoveFavoriteAsync(FavoriteEntity favoriteEntity);
         Task<IEnumerable<FavoriteEntity>> GetUserFavoritesAsync(int userId);
+        Task<bool> ExistsAsync(int userId, int productId);
     }
 }

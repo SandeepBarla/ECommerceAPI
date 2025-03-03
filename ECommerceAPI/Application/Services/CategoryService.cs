@@ -18,12 +18,9 @@ namespace ECommerceAPI.Application.Services
         }
 
         // ✅ Create Category
-        public async Task<Category> CreateCategoryAsync(string name)
+        public async Task<Category> CreateCategoryAsync(Category category)
         {
-            var categoryEntity = new CategoryEntity
-            {
-                Name = name
-            };
+            var categoryEntity = _mapper.Map<CategoryEntity>(category);
             await _categoryRepository.CreateAsync(categoryEntity);
             return _mapper.Map<Category>(categoryEntity);
         }
@@ -45,13 +42,13 @@ namespace ECommerceAPI.Application.Services
         }
 
         // ✅ Update Category
-        public async Task UpdateCategoryAsync(int id, string name)
+        public async Task UpdateCategoryAsync(Category category)
         {
-            var categoryEntity = await _categoryRepository.GetByIdAsync(id);
+            var categoryEntity = await _categoryRepository.GetByIdAsync(category.Id);
             if (categoryEntity == null)
                 throw new KeyNotFoundException("Category not found");
 
-            categoryEntity.Name = name;
+            _mapper.Map(category, categoryEntity);
             await _categoryRepository.UpdateAsync(categoryEntity);
         }
 

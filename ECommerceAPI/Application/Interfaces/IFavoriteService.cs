@@ -4,8 +4,8 @@ namespace ECommerceAPI.Application.Interfaces
 {
     public interface IFavoriteService
     {
-        Task MarkAsFavoriteAsync(int userId, int productId);
-        Task UnmarkAsFavoriteAsync(int userId, int productId);
+        Task MarkAsFavoriteAsync(Favorite favorite);
+        Task UnmarkAsFavoriteAsync(Favorite favorite);
         Task<IEnumerable<Favorite>> GetUserFavoritesAsync(int userId);
     }
 }

@@ -1,5 +1,6 @@
 using AutoMapper;
 using ECommerceAPI.Application.Interfaces;
+using ECommerceAPI.Application.Models;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
@@ -22,10 +23,11 @@ namespace ECommerceAPI.WebApi.Controllers
         }
 
         // ✅ Mark as Favorite
-        [HttpPost]
-        public async Task<IActionResult> MarkAsFavorite(int userId, [FromBody] FavoriteUpsertRequest upsertRequest)
+        [HttpPost("{productId}")]
+        public async Task<IActionResult> MarkAsFavorite(int userId,  int productId)
         {
-            await _favoriteService.MarkAsFavoriteAsync(userId, upsertRequest.ProductId);
+            var favorite = _mapper.Map<Favorite>((userId, productId));
+            await _favoriteService.MarkAsFavoriteAsync(favorite);
             return StatusCode(201); // Created
         }
 
@@ -33,7 +35,8 @@ namespace ECommerceAPI.WebApi.Controllers
         [HttpDelete("{productId}")]
         public async Task<IActionResult> UnmarkAsFavorite(int userId, int productId)
         {
-            await _favoriteService.UnmarkAsFavoriteAsync(userId, productId);
+            var favorite = _mapper.Map<Favorite>((userId, productId));
+            await _favoriteService.UnmarkAsFavoriteAsync(favorite);
             return NoContent(); // 204 No Content
         }
 

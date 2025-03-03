@@ -8,6 +8,6 @@ namespace ECommerceAPI.Infrastructure.Interfaces
         Task<SizeEntity?> GetByIdAsync(int id);
         Task CreateAsync(SizeEntity size);
         Task UpdateAsync(SizeEntity size);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(SizeEntity size);
     }
 }

@@ -36,14 +36,10 @@ namespace ECommerceAPI.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(SizeEntity sizeEntity)
         {
-            var size = await _context.Sizes.FindAsync(id);
-            if (size != null)
-            {
-                _context.Sizes.Remove(size);
-                await _context.SaveChangesAsync();
-            }
+            _context.Sizes.Remove(sizeEntity);
+            await _context.SaveChangesAsync();
         }
     }
 }

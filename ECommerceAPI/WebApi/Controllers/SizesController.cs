@@ -1,5 +1,6 @@
 using AutoMapper;
 using ECommerceAPI.Application.Interfaces;
+using ECommerceAPI.Application.Models;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +26,7 @@ namespace ECommerceAPI.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSize([FromBody] SizeUpsertRequest upsertRequest)
         {
-            var size = await _sizeService.CreateSizeAsync(upsertRequest.Name);
+            var size = await _sizeService.CreateSizeAsync(_mapper.Map<Size>(upsertRequest));
             var response = _mapper.Map<SizeResponse>(size);
             return CreatedAtAction(nameof(GetSizeById), new { id = response.Id }, response);
         }
@@ -44,7 +45,6 @@ namespace ECommerceAPI.WebApi.Controllers
         public async Task<IActionResult> GetSizeById(int id)
         {
             var size = await _sizeService.GetSizeByIdAsync(id);
-            if (size == null) return NotFound();
             var response = _mapper.Map<SizeResponse>(size);
             return Ok(response);
         }
@@ -54,7 +54,7 @@ namespace ECommerceAPI.WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateSize(int id, [FromBody] SizeUpsertRequest upsertRequest)
         {
-            await _sizeService.UpdateSizeAsync(id, upsertRequest.Name);
+            await _sizeService.UpdateSizeAsync(_mapper.Map<Size>((id, upsertRequest)));
             return NoContent(); // 204 No Content
         }
 

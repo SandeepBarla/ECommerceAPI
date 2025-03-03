@@ -4,10 +4,10 @@ namespace ECommerceAPI.Application.Interfaces
 {
     public interface ICategoryService
     {
-        Task<Category> CreateCategoryAsync(string name);
+        Task<Category> CreateCategoryAsync(Category category);
         Task<IEnumerable<Category>> GetAllCategoriesAsync();
         Task<Category> GetCategoryByIdAsync(int id);
-        Task UpdateCategoryAsync(int id, string name);
+        Task UpdateCategoryAsync(Category category);
         Task DeleteCategoryAsync(int id);
     }
 }

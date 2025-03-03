@@ -18,6 +18,11 @@ namespace ECommerceAPI.Application.Profiles
 
             // ✅ Request to Model
             CreateMap<SizeUpsertRequest, Size>();
+            
+            CreateMap<(int id, SizeUpsertRequest request), Size>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.request.Name))
+                .ForMember(dest => dest.SortOrder, opt => opt.MapFrom(src => src.request.SortOrder));
         }
     }
 }

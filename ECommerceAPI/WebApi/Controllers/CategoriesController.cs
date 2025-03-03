@@ -1,5 +1,6 @@
 using AutoMapper;
 using ECommerceAPI.Application.Interfaces;
+using ECommerceAPI.Application.Models;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +26,7 @@ namespace ECommerceAPI.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CategoryUpsertRequest upsertRequest)
         {
-            var category = await _categoryService.CreateCategoryAsync(upsertRequest.Name);
+            var category = await _categoryService.CreateCategoryAsync(_mapper.Map<Category>(upsertRequest));
             var response = _mapper.Map<CategoryResponse>(category);
             return CreatedAtAction(nameof(GetCategoryById), new { id = response.Id }, response);
         }
@@ -40,11 +41,11 @@ namespace ECommerceAPI.WebApi.Controllers
         }
 
         // ✅ Get Category by ID
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);
-            if (category == null) return NotFound();
             var response = _mapper.Map<CategoryResponse>(category);
             return Ok(response);
         }
@@ -54,7 +55,8 @@ namespace ECommerceAPI.WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryUpsertRequest upsertRequest)
         {
-            await _categoryService.UpdateCategoryAsync(id, upsertRequest.Name);
+            var category = _mapper.Map<Category>((id, upsertRequest));
+            await _categoryService.UpdateCategoryAsync(category);
             return NoContent(); // 204 No Content
         }
 

@@ -14,34 +14,16 @@ namespace ECommerceAPI.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task AddFavoriteAsync(int userId, int productId)
+        public async Task AddFavoriteAsync(FavoriteEntity favoriteEntity)
         {
-            var existingFavorite = await _context.Favorites
-                .FirstOrDefaultAsync(f => f.UserId == userId && f.ProductId == productId);
-
-            if (existingFavorite == null)
-            {
-                var favorite = new FavoriteEntity
-                {
-                    UserId = userId,
-                    ProductId = productId
-                };
-
-                await _context.Favorites.AddAsync(favorite);
-                await _context.SaveChangesAsync();
-            }
+            await _context.Favorites.AddAsync(favoriteEntity);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveFavoriteAsync(int userId, int productId)
+        public async Task RemoveFavoriteAsync(FavoriteEntity favoriteEntity)
         {
-            var favorite = await _context.Favorites
-                .FirstOrDefaultAsync(f => f.UserId == userId && f.ProductId == productId);
-
-            if (favorite != null)
-            {
-                _context.Favorites.Remove(favorite);
-                await _context.SaveChangesAsync();
-            }
+            _context.Favorites.Remove(favoriteEntity);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<FavoriteEntity>> GetUserFavoritesAsync(int userId)
@@ -49,7 +31,14 @@ namespace ECommerceAPI.Infrastructure.Repositories
             return await _context.Favorites
                 .Where(f => f.UserId == userId)
                 .Include(f => f.Product)
+                .ThenInclude(p => p.Media)
                 .ToListAsync();
+        }
+        
+        public async Task<bool> ExistsAsync(int userId, int productId)
+        {
+            return await _context.Favorites
+                .AnyAsync(f => f.UserId == userId && f.ProductId == productId);
         }
     }
 }

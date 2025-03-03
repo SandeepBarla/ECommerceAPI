@@ -17,7 +17,14 @@ namespace ECommerceAPI.Application.Profiles
             CreateMap<Category, CategoryResponse>();
 
             // ✅ Request to Model
-            CreateMap<CategoryUpsertRequest, Category>();
+            // ✅ Create Category (Ignore Id)
+            CreateMap<CategoryUpsertRequest, Category>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore()); // Id is ignored by default
+            
+            // ✅ Update Category (Uses Id from the route)
+            CreateMap<(int id, CategoryUpsertRequest request), Category>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id)) // Map Id from route
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.request.Name));
         }
     }
 }

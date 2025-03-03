@@ -18,12 +18,9 @@ namespace ECommerceAPI.Application.Services
         }
 
         // ✅ Create Size
-        public async Task<Size> CreateSizeAsync(string name)
+        public async Task<Size> CreateSizeAsync(Size size)
         {
-            var sizeEntity = new SizeEntity
-            {
-                Name = name
-            };
+            var sizeEntity = _mapper.Map<SizeEntity>(size);
             await _sizeRepository.CreateAsync(sizeEntity);
             return _mapper.Map<Size>(sizeEntity);
         }
@@ -45,13 +42,12 @@ namespace ECommerceAPI.Application.Services
         }
 
         // ✅ Update Size
-        public async Task UpdateSizeAsync(int id, string name)
+        public async Task UpdateSizeAsync(Size size)
         {
-            var sizeEntity = await _sizeRepository.GetByIdAsync(id);
+            var sizeEntity = await _sizeRepository.GetByIdAsync(size.Id);
             if (sizeEntity == null)
                 throw new KeyNotFoundException("Size not found");
-
-            sizeEntity.Name = name;
+            _mapper.Map(size, sizeEntity);
             await _sizeRepository.UpdateAsync(sizeEntity);
         }
 
@@ -62,7 +58,7 @@ namespace ECommerceAPI.Application.Services
             if (sizeEntity == null)
                 throw new KeyNotFoundException("Size not found");
 
-            await _sizeRepository.DeleteAsync(id);
+            await _sizeRepository.DeleteAsync(sizeEntity);
         }
     }
 }

@@ -9,11 +9,21 @@ namespace ECommerceAPI.Application.Profiles
     {
         public FavoriteProfile()
         {
+            CreateMap<(int userId, int productId), Favorite>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.userId))
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.productId));
+            
             // ✅ Entity to Model
             CreateMap<FavoriteEntity, Favorite>().ReverseMap();
 
             // ✅ Model to Response
-            CreateMap<Favorite, FavoriteResponse>();
+            CreateMap<Favorite, FavoriteResponse>()
+                .ForMember(dest => dest.Name, opt => 
+                    opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest => dest.Price, opt => 
+                    opt.MapFrom(src => src.Product.Price))
+                .ForMember(dest => dest.PrimaryImageUrl, opt =>
+                    opt.MapFrom(src => src.Product.Media.FirstOrDefault().MediaUrl));
         }
     }
 }
