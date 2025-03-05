@@ -5,7 +5,6 @@ using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
 using AutoMapper;
 using ECommerceAPI.Application.Models;
-using ECommerceAPI.Infrastructure.Repositories.Interfaces;
 using FluentValidation;
 
 namespace ECommerceAPI.WebApi.Controllers

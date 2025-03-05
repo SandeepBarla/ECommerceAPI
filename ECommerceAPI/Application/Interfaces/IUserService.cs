@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using ECommerceAPI.Application.Models;
-using ECommerceAPI.WebApi.DTOs.RequestModels;
 
 namespace ECommerceAPI.Application.Interfaces
 {
