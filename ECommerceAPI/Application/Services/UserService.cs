@@ -3,6 +3,7 @@ using ECommerceAPI.Application.Models;
 using AutoMapper;
 using ECommerceAPI.Infrastructure.Entities;
 using ECommerceAPI.Infrastructure.Repositories.Interfaces;
+using Google.Apis.Auth;
 
 namespace ECommerceAPI.Application.Services
 {
@@ -53,6 +54,36 @@ namespace ECommerceAPI.Application.Services
                 throw new UnauthorizedAccessException("Invalid email or password.");
 
             return _mapper.Map<User>(userEntity);
+        }
+        
+        public async Task<User> FindOrCreateUserFromGoogleAsync(GoogleJsonWebSignature.Payload payload)
+        {
+            // Try to find the user by email
+            var existingUserEntity = await _userRepository.GetByEmailAsync(payload.Email);
+
+            if (existingUserEntity != null)
+            {
+                // User already exists → login
+                return _mapper.Map<User>(existingUserEntity);
+            }
+
+            // New user → register them using Google profile
+            var newUser = new User
+            {
+                Email = payload.Email,
+                FullName = payload.Name,
+                Role = "User",                   // Default role for new users
+                PasswordHash = null             // No password since Google handles authentication
+            };
+
+            // Convert domain model to entity
+            var newUserEntity = _mapper.Map<UserEntity>(newUser);
+
+            // Save to database
+            await _userRepository.CreateAsync(newUserEntity);
+
+            // Return the created user as domain model
+            return _mapper.Map<User>(newUserEntity);
         }
     }
 }

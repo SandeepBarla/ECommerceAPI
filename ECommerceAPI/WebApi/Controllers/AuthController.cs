@@ -3,6 +3,7 @@ using ECommerceAPI.Application.Interfaces;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
 using FluentValidation;
+using Google.Apis.Auth;
 
 namespace ECommerceAPI.WebApi.Controllers
 {
@@ -19,6 +20,27 @@ namespace ECommerceAPI.WebApi.Controllers
             _userService = userService;
             _tokenService = tokenService;
             _userLoginRequestValidator = userLoginRequestValidator;
+        }
+        
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request)
+        {
+            // Validate the Google ID token
+            var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken);
+
+            // Create or fetch the user
+            var user = await _userService.FindOrCreateUserFromGoogleAsync(payload);
+
+            // Generate JWT token for the app
+            var token = _tokenService.GenerateToken(user.Id, user.Email, user.Role);
+
+            // Return standard auth response
+            return Ok(new AuthResponse
+            {
+                UserId = user.Id,
+                Token = token,
+                Role = user.Role
+            });
         }
 
         // Login Endpoint

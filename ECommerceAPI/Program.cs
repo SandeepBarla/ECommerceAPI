@@ -134,6 +134,13 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+// ✅ Apply EF Core migrations automatically at startup
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate(); // Applies any pending migrations to Supabase
+}
+
 // Register Global Exception Handling Middleware
 app.UseMiddleware<ECommerceAPI.WebApi.Middleware.ExceptionHandlingMiddleware>();
 

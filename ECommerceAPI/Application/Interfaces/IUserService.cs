@@ -1,4 +1,5 @@
 using ECommerceAPI.Application.Models;
+using Google.Apis.Auth;
 
 namespace ECommerceAPI.Application.Interfaces
 {
@@ -8,5 +9,6 @@ namespace ECommerceAPI.Application.Interfaces
         Task<User> GetUserByIdAsync(int userId);
         Task<IEnumerable<User>> GetAllUsersAsync();
         Task<User> ValidateUserCredentialsAsync(string email, string password);
+        Task<User> FindOrCreateUserFromGoogleAsync(GoogleJsonWebSignature.Payload payload);
     }
 }
