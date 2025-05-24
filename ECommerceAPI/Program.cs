@@ -27,7 +27,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 var jwtSettings = configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 
-if (key.Length < 32) 
+if (key.Length < 32)
 {
     throw new InvalidOperationException("JWT Key is too short! Must be at least 32 characters.");
 }
@@ -57,7 +57,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICartService, CartService>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 
