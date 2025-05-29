@@ -6,6 +6,7 @@ namespace ECommerceAPI.WebApi.DTOs.ResponseModels
     public class OrderResponse
     {
         public int Id { get; set; }
+        public int UserId { get; set; }
         public List<OrderProductResponse> OrderProducts { get; set; }
         public decimal TotalAmount { get; set; }
         public string PaymentStatus { get; set; }
