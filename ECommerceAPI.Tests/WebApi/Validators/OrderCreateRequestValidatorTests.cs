@@ -4,6 +4,7 @@ using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.Validators;
 using System.Collections.Generic;
 namespace ECommerceAPI.Tests.WebApi.Validators;
+
 public class OrderCreateRequestValidatorTests
 {
     private readonly OrderCreateRequestValidator _validator;
@@ -20,7 +21,7 @@ public class OrderCreateRequestValidatorTests
         {
             OrderProducts = new List<OrderProductRequest>(), // Empty list
             TotalAmount = 100,
-            ShippingAddress = "123 Test Street"
+            AddressId = 1
         };
 
         var result = _validator.TestValidate(request);
@@ -38,7 +39,7 @@ public class OrderCreateRequestValidatorTests
                 new OrderProductRequest { ProductId = 0, Quantity = 2 } // Invalid ProductId
             },
             TotalAmount = 100,
-            ShippingAddress = "123 Test Street"
+            AddressId = 1
         };
 
         var result = _validator.TestValidate(request);
@@ -56,7 +57,7 @@ public class OrderCreateRequestValidatorTests
                 new OrderProductRequest { ProductId = 1, Quantity = 0 } // Invalid Quantity
             },
             TotalAmount = 100,
-            ShippingAddress = "123 Test Street"
+            AddressId = 1
         };
 
         var result = _validator.TestValidate(request);
@@ -74,7 +75,7 @@ public class OrderCreateRequestValidatorTests
                 new OrderProductRequest { ProductId = 1, Quantity = 2 }
             },
             TotalAmount = 0, // Invalid TotalAmount
-            ShippingAddress = "123 Test Street"
+            AddressId = 1
         };
 
         var result = _validator.TestValidate(request);
@@ -83,7 +84,7 @@ public class OrderCreateRequestValidatorTests
     }
 
     [Fact]
-    public void Should_HaveError_When_ShippingAddress_Is_Empty()
+    public void Should_HaveError_When_AddressId_Is_Invalid()
     {
         var request = new OrderCreateRequest
         {
@@ -92,12 +93,12 @@ public class OrderCreateRequestValidatorTests
                 new OrderProductRequest { ProductId = 1, Quantity = 2 }
             },
             TotalAmount = 100,
-            ShippingAddress = "" // Empty Shipping Address
+            AddressId = 0 // Invalid AddressId
         };
 
         var result = _validator.TestValidate(request);
-        result.ShouldHaveValidationErrorFor(r => r.ShippingAddress)
-            .WithErrorMessage("Shipping address is required.");
+        result.ShouldHaveValidationErrorFor(r => r.AddressId)
+            .WithErrorMessage("Address ID must be valid.");
     }
 
     [Fact]
@@ -110,10 +111,27 @@ public class OrderCreateRequestValidatorTests
                 new OrderProductRequest { ProductId = 1, Quantity = 2 }
             },
             TotalAmount = 100,
-            ShippingAddress = "123 Test Street"
+            AddressId = 1
         };
 
         var result = _validator.TestValidate(request);
         result.ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Fact]
+    public void Should_NotHaveError_When_AddressId_Is_Null()
+    {
+        var request = new OrderCreateRequest
+        {
+            OrderProducts = new List<OrderProductRequest>
+            {
+                new OrderProductRequest { ProductId = 1, Quantity = 2 }
+            },
+            TotalAmount = 100,
+            AddressId = null // Nullable for backward compatibility
+        };
+
+        var result = _validator.TestValidate(request);
+        result.ShouldNotHaveValidationErrorFor(r => r.AddressId);
     }
 }

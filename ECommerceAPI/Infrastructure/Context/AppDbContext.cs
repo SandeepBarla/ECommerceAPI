@@ -107,6 +107,13 @@ namespace ECommerceAPI.Infrastructure.Context
                 .WithMany(s => s.Products)
                 .HasForeignKey(p => p.SizeId);
 
+            // ✅ One-to-Many Relationship for Order-Address
+            modelBuilder.Entity<OrderEntity>()
+                .HasOne(o => o.Address)
+                .WithMany()
+                .HasForeignKey(o => o.AddressId)
+                .OnDelete(DeleteBehavior.SetNull); // When address is deleted, set AddressId to null
+
         }
     }
 }

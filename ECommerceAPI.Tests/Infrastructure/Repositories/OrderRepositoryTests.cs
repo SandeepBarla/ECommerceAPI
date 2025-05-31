@@ -30,9 +30,9 @@ public class OrderRepositoryTests
     {
         var orders = new List<OrderEntity>
         {
-            new OrderEntity { Id = 1, UserId = 1, TotalAmount = 100, PaymentStatus = "Pending", ShippingAddress = "Test Address" },
-            new OrderEntity { Id = 2, UserId = 1, TotalAmount = 200, PaymentStatus = "Pending", ShippingAddress = "Test Address" },
-            new OrderEntity { Id = 3, UserId = 2, TotalAmount = 300, PaymentStatus = "Pending", ShippingAddress = "Test Address" }
+            new OrderEntity { Id = 1, UserId = 1, TotalAmount = 100, PaymentStatus = "Pending", AddressId = 1 },
+            new OrderEntity { Id = 2, UserId = 1, TotalAmount = 200, PaymentStatus = "Pending", AddressId = 1 },
+            new OrderEntity { Id = 3, UserId = 2, TotalAmount = 300, PaymentStatus = "Pending", AddressId = 2 }
         };
 
         _dbContext.Orders.AddRange(orders);

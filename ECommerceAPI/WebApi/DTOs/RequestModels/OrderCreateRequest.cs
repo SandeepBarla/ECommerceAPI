@@ -7,7 +7,8 @@ namespace ECommerceAPI.WebApi.DTOs.RequestModels
     {
         public List<OrderProductRequest> OrderProducts { get; set; } = new List<OrderProductRequest>();
         public decimal TotalAmount { get; set; }
-        public string ShippingAddress { get; set; }
+        public int? AddressId { get; set; } // Foreign Key to Address (nullable for backward compatibility)
+        public string? PaymentProofUrl { get; set; } // Cloudinary URL for payment proof image
     }
 
     public class OrderProductRequest

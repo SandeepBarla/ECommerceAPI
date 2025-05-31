@@ -12,6 +12,7 @@ using ECommerceAPI.Application.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 namespace ECommerceAPI.Tests.WebApi.Controllers;
+
 public class OrderControllerTests
 {
     private readonly Mock<IOrderService> _orderServiceMock;
@@ -30,7 +31,7 @@ public class OrderControllerTests
         _controller = new OrderController(
             _orderServiceMock.Object,
             _mapperMock.Object,
-            _createValidatorMock.Object, 
+            _createValidatorMock.Object,
             _updateValidatorMock.Object
         );
     }
@@ -42,11 +43,11 @@ public class OrderControllerTests
         {
             OrderProducts = new List<OrderProductRequest> { new OrderProductRequest { ProductId = 1, Quantity = 2 } },
             TotalAmount = 100,
-            ShippingAddress = "123 Street, NY"
+            AddressId = 1
         };
 
-        var order = new Order { Id = 1, TotalAmount = 100, ShippingAddress = "123 Street, NY" };
-        var response = new OrderResponse { Id = 1, TotalAmount = 100, ShippingAddress = "123 Street, NY" };
+        var order = new Order { Id = 1, TotalAmount = 100, AddressId = 1 };
+        var response = new OrderResponse { Id = 1, TotalAmount = 100, AddressId = 1 };
 
         _createValidatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(new ValidationResult());

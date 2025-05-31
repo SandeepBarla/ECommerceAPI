@@ -22,8 +22,9 @@ namespace ECommerceAPI.WebApi.Validators
             RuleFor(o => o.TotalAmount)
                 .GreaterThan(0).WithMessage("Total amount must be greater than zero.");
 
-            RuleFor(o => o.ShippingAddress)
-                .NotEmpty().WithMessage("Shipping address is required.");
+            RuleFor(o => o.AddressId)
+                .GreaterThan(0).WithMessage("Address ID must be valid.")
+                .When(o => o.AddressId.HasValue);
         }
     }
 }

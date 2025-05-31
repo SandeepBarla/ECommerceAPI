@@ -20,6 +20,9 @@ namespace ECommerceAPI.Application.Profiles
             CreateMap<OrderProduct, OrderProductResponse>();
             CreateMap<Order, OrderResponse>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+
+            // Map OrderEntity to OrderResponse (no address mapping needed)
+            CreateMap<OrderEntity, OrderResponse>();
         }
     }
 }
