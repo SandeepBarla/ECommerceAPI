@@ -9,11 +9,13 @@ using FluentValidation.Results;
 using ECommerceAPI.Application.Models;
 using ECommerceAPI.Tests.Common;
 namespace ECommerceAPI.Tests.WebApi.Controllers;
+
 public class UserControllerTests : TestBase
 {
     private readonly Mock<IUserService> _userServiceMock;
     private readonly Mock<ITokenService> _tokenServiceMock;
     private readonly Mock<IValidator<UserRegisterRequest>> _registerValidatorMock;
+    private readonly Mock<IValidator<UserUpdateRequest>> _updateValidatorMock;
     private readonly UserController _controller;
 
     public UserControllerTests()
@@ -21,7 +23,8 @@ public class UserControllerTests : TestBase
         _userServiceMock = new Mock<IUserService>();
         _tokenServiceMock = new Mock<ITokenService>();
         _registerValidatorMock = new Mock<IValidator<UserRegisterRequest>>();
-        _controller = new UserController(_userServiceMock.Object, _tokenServiceMock.Object, Mapper, _registerValidatorMock.Object);
+        _updateValidatorMock = new Mock<IValidator<UserUpdateRequest>>();
+        _controller = new UserController(_userServiceMock.Object, _tokenServiceMock.Object, Mapper, _registerValidatorMock.Object, _updateValidatorMock.Object);
     }
 
     [Fact]

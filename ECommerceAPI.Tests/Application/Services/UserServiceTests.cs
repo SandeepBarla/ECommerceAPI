@@ -7,6 +7,7 @@ using ECommerceAPI.Infrastructure.Repositories.Interfaces;
 using ECommerceAPI.Tests.Common;
 using FluentAssertions;
 namespace ECommerceAPI.Tests.Application.Services;
+
 public class UserServiceTests : TestBase
 {
     private readonly UserService _userService;
@@ -94,7 +95,7 @@ public class UserServiceTests : TestBase
             new UserEntity { Id = 1, FullName = "John Doe", Email = "john@example.com" },
             new UserEntity { Id = 2, FullName = "Jane Doe", Email = "jane@example.com" }
         };
-        
+
         _userRepositoryMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(userEntities);
 
         // Act
@@ -105,7 +106,7 @@ public class UserServiceTests : TestBase
         result.Should().HaveCount(2);
         _userRepositoryMock.Verify(repo => repo.GetAllAsync(), Times.Once);
     }
-    
+
     // Test: Get User by Id Should Throw KeyNotFoundException if Not Found
     [Fact]
     public async Task GetUserByIdAsync_ShouldThrowKeyNotFoundException_WhenUserDoesNotExist()
@@ -120,5 +121,88 @@ public class UserServiceTests : TestBase
 
         await act.Should().ThrowAsync<KeyNotFoundException>()
             .WithMessage("User not found.");
+    }
+
+    // Test: Update User Profile Successfully
+    [Fact]
+    public async Task UpdateUserProfileAsync_ShouldUpdateUser_WhenUserExists()
+    {
+        // Arrange
+        var userEntity = new UserEntity
+        {
+            Id = 1,
+            FullName = "John Doe",
+            Email = "john@example.com",
+            Phone = "1234567890",
+            Role = "User"
+        };
+
+        _userRepositoryMock.Setup(repo => repo.GetByIdAsync(1))
+            .ReturnsAsync(userEntity);
+        _userRepositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<UserEntity>()))
+            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _userService.UpdateUserProfileAsync(1, "Jane Smith", "0987654321");
+
+        // Assert
+        result.Should().NotBeNull();
+        result.FullName.Should().Be("Jane Smith");
+        result.Phone.Should().Be("0987654321");
+        result.Email.Should().Be("john@example.com"); // Email should remain unchanged
+
+        _userRepositoryMock.Verify(repo => repo.GetByIdAsync(1), Times.Once);
+        _userRepositoryMock.Verify(repo => repo.UpdateAsync(It.Is<UserEntity>(u =>
+            u.FullName == "Jane Smith" && u.Phone == "0987654321")), Times.Once);
+    }
+
+    // Test: Update User Profile Should Handle Null Phone
+    [Fact]
+    public async Task UpdateUserProfileAsync_ShouldHandleNullPhone_WhenPhoneIsNull()
+    {
+        // Arrange
+        var userEntity = new UserEntity
+        {
+            Id = 1,
+            FullName = "John Doe",
+            Email = "john@example.com",
+            Phone = "1234567890",
+            Role = "User"
+        };
+
+        _userRepositoryMock.Setup(repo => repo.GetByIdAsync(1))
+            .ReturnsAsync(userEntity);
+        _userRepositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<UserEntity>()))
+            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _userService.UpdateUserProfileAsync(1, "Jane Smith", null);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.FullName.Should().Be("Jane Smith");
+        result.Phone.Should().BeNull();
+
+        _userRepositoryMock.Verify(repo => repo.UpdateAsync(It.Is<UserEntity>(u =>
+            u.FullName == "Jane Smith" && u.Phone == null)), Times.Once);
+    }
+
+    // Test: Update User Profile Should Throw KeyNotFoundException When User Does Not Exist
+    [Fact]
+    public async Task UpdateUserProfileAsync_ShouldThrowKeyNotFoundException_WhenUserDoesNotExist()
+    {
+        // Arrange
+        _userRepositoryMock.Setup(repo => repo.GetByIdAsync(999))
+            .ReturnsAsync((UserEntity)null);
+
+        // Act
+        var act = async () => await _userService.UpdateUserProfileAsync(999, "Jane Smith", "0987654321");
+
+        // Assert
+        await act.Should().ThrowAsync<KeyNotFoundException>()
+            .WithMessage("User not found.");
+
+        _userRepositoryMock.Verify(repo => repo.GetByIdAsync(999), Times.Once);
+        _userRepositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<UserEntity>()), Times.Never);
     }
 }

@@ -10,5 +10,6 @@ namespace ECommerceAPI.Application.Interfaces
         Task<IEnumerable<User>> GetAllUsersAsync();
         Task<User> ValidateUserCredentialsAsync(string email, string password);
         Task<User> FindOrCreateUserFromGoogleAsync(GoogleJsonWebSignature.Payload payload);
+        Task<User> UpdateUserProfileAsync(int userId, string fullName, string? phone);
     }
 }

@@ -60,6 +60,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
 
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -69,6 +70,7 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ISizeRepository, SizeRepository>();
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 
 builder.Services.AddScoped<IValidator<ProductUpsertRequest>, ProductUpsertRequestValidator>();
 builder.Services.AddScoped<IValidator<OrderCreateRequest>, OrderCreateRequestValidator>();
@@ -76,6 +78,8 @@ builder.Services.AddScoped<IValidator<OrderStatusUpdateRequest>, OrderStatusUpda
 builder.Services.AddScoped<IValidator<UserLoginRequest>, UserLoginRequestValidator>();
 builder.Services.AddScoped<IValidator<UserRegisterRequest>, UserRegisterRequestValidator>();
 builder.Services.AddScoped<IValidator<CartAddOrUpdateItemRequest>, CartAddOrUpdateItemRequestValidator>();
+builder.Services.AddScoped<IValidator<AddressUpsertRequest>, AddressUpsertRequestValidator>();
+builder.Services.AddScoped<IValidator<UserUpdateRequest>, UserUpdateRequestValidator>();
 
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

@@ -11,5 +11,6 @@ namespace ECommerceAPI.Infrastructure.Repositories.Interfaces
         Task<UserEntity?> GetByIdAsync(int userId);
         Task<UserEntity?> GetByEmailAsync(string email);
         Task<IEnumerable<UserEntity>> GetAllAsync();
+        Task UpdateAsync(UserEntity userEntity);
     }
 }

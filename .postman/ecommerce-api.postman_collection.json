@@ -1,0 +1,1206 @@
+{
+  "info": {
+    "_postman_id": "89cb77dd-3415-49ab-8fa9-980ae4a6537f",
+    "name": "E-Commerce API",
+    "description": "Complete API collection for E-Commerce platform with address management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12915134"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login User 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = JSON.parse(responseBody);",
+                  "pm.collectionVariables.set(\"JWT_TOKEN\", jsonData.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user1@user.com\",\n  \"password\": \"user1\"\n}"
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/auth/login",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = JSON.parse(responseBody);",
+                  "pm.collectionVariables.set(\"JWT_TOKEN\", jsonData.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user2@user.com\",\n  \"password\": \"user2\"\n}"
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/auth/login",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = JSON.parse(responseBody);",
+                  "pm.collectionVariables.set(\"JWT_TOKEN\", jsonData.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@admin.com\",\n  \"password\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/auth/login",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Google Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = JSON.parse(responseBody);",
+                  "pm.collectionVariables.set(\"JWT_TOKEN\", jsonData.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"eyJhbGciOiJSUzI1NiIsImtpZCI6ImUxNGMzN2Q2ZTVjNzU2ZThiNzJmZGI1MDA0YzBjYzM1NjMzNzkyNGUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIzNDUwMzk4NzgzMDUtaWJnNm5vaDMyc3RmNWliZmRza2JpNDhpZmVtaXZsamsuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIzNDUwMzk4NzgzMDUtaWJnNm5vaDMyc3RmNWliZmRza2JpNDhpZmVtaXZsamsuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDQ2MzYxNDczODQwNTEzODUxMDMiLCJlbWFpbCI6ImJhcmxhdmVua2F0c2FuZGVlcEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmJmIjoxNzQ3Mzc0NDMyLCJuYW1lIjoiVmVua2F0IFNhbmRlZXAgQmFybGEiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jS0dnTnNnclVDOTdzUzFuM0dyeHBMNy1ERWt3b2hOeHVsMkExdklZMHFCa2pWMXQ5ZVRPQT1zOTYtYyIsImdpdmVuX25hbWUiOiJWZW5rYXQgU2FuZGVlcCIsImZhbWlseV9uYW1lIjoiQmFybGEiLCJpYXQiOjE3NDczNzQ3MzIsImV4cCI6MTc0NzM3ODMzMiwianRpIjoiMzVmNDQ0ODYzMzhhMTYxYmEzZGY3ODk1ODU5ZTY5MGJjMzliMTM5MSJ9.uqoj6tofoUr61Yd0Zaz8kNN0JSH8C8YWUNz36Qa4oQPjX_FtfTta1jGn52LoUEwDSsAG5qvVKKgMCj5nt1fe535Tmv_YhOTxFZim99wRVVCMLoqrYDojdXYgS6Q4vuBs8t_2F3FOPfBduQ8MhMycFurBPo1P2Lj5hJGHxm-T0I4xwi-Zy6ZUZKy-jao9S9tCuPZvpbeY66DpdIdX3fjeKtNaBP4qNWY4-W0z7udkaGfmA9iX9FAroidwRVzAcLJEUyPp17LpldzjOtLdfbMmus8Qdy1soNrXUWDD4rBYbxut4wPIupjfKdBPv5NfSDXLgUkciBwA1Wpe592vESZuKQ\"\n}"
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/auth/google-login",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "auth", "google-login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"User2\",\n  \"email\": \"user2@user.com\",\n  \"password\": \"user2\"\n}"
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by UserId",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users (Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe Updated\",\n  \"phone\": \"1234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Address",
+      "item": [
+        {
+          "name": "Get User Addresses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/addresses",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "addresses"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Address by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/addresses/:addressId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "addresses", ":addressId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                },
+                {
+                  "key": "addressId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Home\",\n  \"street\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"state\": \"NY\",\n  \"pincode\": \"123456\",\n  \"phone\": \"1234567890\",\n  \"isDefault\": true\n}"
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/addresses",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "addresses"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Home Updated\",\n  \"street\": \"456 Updated Street\",\n  \"city\": \"Boston\",\n  \"state\": \"MA\",\n  \"pincode\": \"654321\",\n  \"phone\": \"0987654321\",\n  \"isDefault\": false\n}"
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/addresses/:addressId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "addresses", ":addressId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                },
+                {
+                  "key": "addressId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Address",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/addresses/:addressId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "addresses", ":addressId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                },
+                {
+                  "key": "addressId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Set Default Address",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/addresses/:addressId/set-default",
+              "host": ["{{ecommerceurl}}"],
+              "path": [
+                "api",
+                "users",
+                ":userId",
+                "addresses",
+                ":addressId",
+                "set-default"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                },
+                {
+                  "key": "addressId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Default Address",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/addresses/default",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "addresses", "default"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"orderProducts\": [\n        { \"productId\": 2, \"quantity\": 3 }\n    ],\n    \"totalAmount\": 1500.00,\n    \"shippingAddress\": \"123, Street Name, City, Country\"\n}\n"
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/orders",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "orders"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Orders of User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/orders",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "orders"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Order of User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/orders/:orderId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "orders", ":orderId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "2"
+                },
+                {
+                  "key": "orderId",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Orders of All Users (Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/orders",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "orders"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Order Status (Admin Only)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\":\"Shipped\" \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/orders/:orderId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "orders", ":orderId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "2"
+                },
+                {
+                  "key": "orderId",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Product",
+      "item": [
+        {
+          "name": "Product - Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pretty Pink Net Lehenga\",\n  \"description\": \"Grace in Every Twirl! Drape yourself in elegance with this pretty pink net lehenga, paired with a beautiful lilac floral blouse. The soft net dupatta adds a dreamy touch, making it a perfect pick for any occasion * Shine bright and make every moment magical!Grace in Every Twirl! Drape yourself in elegance with this pretty pink net lehenga, paired with a beautiful lilac floral blouse. The soft net dupatta adds a dreamy touch, making it a perfect pick for any occasion * Shine bright and make every moment magical!\",\n  \"price\": 149.99,\n  \"stock\": 40,\n  \"media\": [\n    {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/image/upload/v1739739118/prod6a_vkejab.jpg\",\n    \"type\": 0,\n    \"orderIndex\": 1\n  },\n  {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/video/upload/v1739739120/prod6v_ckhsw6.mp4\",\n    \"type\": 1,\n    \"orderIndex\": 2\n  },\n  {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/image/upload/v1739739119/prod6b_ohpd8v.jpg\",\n    \"type\": 0,\n    \"orderIndex\": 3\n  },\n  {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/image/upload/v1739739119/prod6c_v8ovyc.jpg\",\n    \"type\": 0,\n    \"orderIndex\": 4\n  }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/products",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "products"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Product - Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/products",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "products"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Product - Get Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/products/12",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "products", "12"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Product - Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mauve Brown Netted Lehenga\",\n  \"description\": \"Style yourself in this mauve brown netted lehenga, complemented by a shimmery tissue crop top embellished with colorful beadwork for a stunning look.\",\n  \"price\": 149.99,\n  \"stock\": 40,\n  \"media\": [\n    {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/image/upload/v1739739083/prod4a_qne7de.jpg\",\n    \"type\": 0,\n    \"orderIndex\": 1\n  },\n  {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/video/upload/v1739739085/prod4v_g5nmwc.mp4\",\n    \"type\": 1,\n    \"orderIndex\": 2\n  },\n  {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/image/upload/v1739739084/prod4b_metoea.jpg\",\n    \"type\": 0,\n    \"orderIndex\": 3\n  },\n  {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/image/upload/v1739739084/prod4c_gno142.jpg\",\n    \"type\": 0,\n    \"orderIndex\": 4\n  }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/products/8",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "products", "8"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Product - Delete Product",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/products/15",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "products", "15"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Cart of a User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/cart",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "cart"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Or Update Cart of User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": 2,\n  \"quantity\": 1\n}"
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/cart",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "cart"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cart - Delete Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/cart",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "cart"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "4242"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/categories",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "categories"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category by Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/categories/:categoryId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "categories", ":categoryId"],
+              "variable": [
+                {
+                  "key": "categoryId",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\" : \"Test Category\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/categories",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "categories"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\" : \"Test Category Update\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/categories/:categoryId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "categories", ":categoryId"],
+              "variable": [
+                {
+                  "key": "categoryId",
+                  "value": "4"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/categories/:categoryId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "categories", ":categoryId"],
+              "variable": [
+                {
+                  "key": "categoryId",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sizes",
+      "item": [
+        {
+          "name": "Get Sizes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/sizes",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "sizes"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Sizes by Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/sizes/:sizeId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "sizes", ":sizeId"],
+              "variable": [
+                {
+                  "key": "sizeId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Size",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\" : \"Test Size\",\n    \"sortOrder\" : 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/sizes",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "sizes"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Size",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\" : \"Test Size Update\",\n    \"sortOrder\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{ecommerceurl}}/api/sizes/:sizeId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "sizes", ":sizeId"],
+              "variable": [
+                {
+                  "key": "sizeId",
+                  "value": "4"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Size",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/sizes/:sizeId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "sizes", ":sizeId"],
+              "variable": [
+                {
+                  "key": "sizeId",
+                  "value": "4"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Favorites",
+      "item": [
+        {
+          "name": "Mark as favorite",
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/favorites/:productId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "favorites", ":productId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "10"
+                },
+                {
+                  "key": "productId",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unmark as favorite",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/favorites/:productId",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "favorites", ":productId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "2"
+                },
+                {
+                  "key": "productId",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Favorites",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecommerceurl}}/api/users/:userId/favorites",
+              "host": ["{{ecommerceurl}}"],
+              "path": ["api", "users", ":userId", "favorites"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "JWT_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ADMIN_JWT_TOKEN",
+      "value": ""
+    }
+  ]
+}

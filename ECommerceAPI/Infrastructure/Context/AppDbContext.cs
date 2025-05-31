@@ -27,6 +27,9 @@ namespace ECommerceAPI.Infrastructure.Context
         // ✅ DbSet for Favorites
         public DbSet<FavoriteEntity> Favorites { get; set; }
 
+        // ✅ DbSet for Addresses
+        public DbSet<AddressEntity> Addresses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Ensure each user has only one cart
@@ -53,13 +56,13 @@ namespace ECommerceAPI.Infrastructure.Context
                 .WithOne(op => op.Order)
                 .HasForeignKey(op => op.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
             modelBuilder.Entity<ProductEntity>()
                 .HasMany(p => p.Media)
                 .WithOne(m => m.Product)
                 .HasForeignKey(m => m.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
             // ✅ Many-to-Many Configuration for Favorites
             modelBuilder.Entity<FavoriteEntity>()
                 .HasKey(f => new { f.UserId, f.ProductId });
@@ -69,13 +72,20 @@ namespace ECommerceAPI.Infrastructure.Context
                 .WithMany(p => p.Favorites)
                 .HasForeignKey(f => f.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
             modelBuilder.Entity<FavoriteEntity>()
                 .HasOne(f => f.User)
                 .WithMany(u => u.Favorites)
                 .HasForeignKey(f => f.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
+            // ✅ One-to-Many Relationship for User-Address
+            modelBuilder.Entity<AddressEntity>()
+                .HasOne(a => a.User)
+                .WithMany(u => u.Addresses)
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // ✅ Ensure CategoryId and SizeId default to 1
             modelBuilder.Entity<ProductEntity>()
                 .Property(p => p.CategoryId)
@@ -84,19 +94,19 @@ namespace ECommerceAPI.Infrastructure.Context
             modelBuilder.Entity<ProductEntity>()
                 .Property(p => p.SizeId)
                 .HasDefaultValue(1);
-            
+
             // ✅ One-to-Many Relationship for Category
             modelBuilder.Entity<ProductEntity>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId);
-            
+
             // ✅ One-to-Many Relationship for Size
             modelBuilder.Entity<ProductEntity>()
                 .HasOne(p => p.Size)
                 .WithMany(s => s.Products)
                 .HasForeignKey(p => p.SizeId);
-            
+
         }
     }
 }

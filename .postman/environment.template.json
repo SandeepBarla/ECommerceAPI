@@ -1,0 +1,21 @@
+{
+  "id": "environment-template",
+  "name": "E-Commerce API Environment",
+  "values": [
+    {
+      "key": "ecommerceurl",
+      "value": "http://localhost:5000",
+      "description": "Base URL for the E-Commerce API",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "JWT_TOKEN",
+      "value": "",
+      "description": "JWT token for authenticated requests (auto-populated by login scripts)",
+      "type": "default",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

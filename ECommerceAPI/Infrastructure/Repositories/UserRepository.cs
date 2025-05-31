@@ -24,7 +24,9 @@ namespace ECommerceAPI.Infrastructure.Repositories
 
         public async Task<UserEntity?> GetByIdAsync(int userId)
         {
-            return await _context.Users.FindAsync(userId);
+            return await _context.Users
+                .Include(u => u.Addresses)
+                .FirstOrDefaultAsync(u => u.Id == userId);
         }
 
         public async Task<UserEntity?> GetByEmailAsync(string email)
@@ -35,6 +37,12 @@ namespace ECommerceAPI.Infrastructure.Repositories
         public async Task<IEnumerable<UserEntity>> GetAllAsync()
         {
             return await _context.Users.ToListAsync();
+        }
+
+        public async Task UpdateAsync(UserEntity userEntity)
+        {
+            _context.Users.Update(userEntity);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -17,14 +17,17 @@ namespace ECommerceAPI.WebApi.Controllers
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IValidator<UserRegisterRequest> _userRegisterRequestValidator;
+        private readonly IValidator<UserUpdateRequest> _userUpdateRequestValidator;
 
-        public UserController(IUserService userService, ITokenService tokenService, IMapper mapper
-        , IValidator<UserRegisterRequest> userRegisterRequestValidator)
+        public UserController(IUserService userService, ITokenService tokenService, IMapper mapper,
+            IValidator<UserRegisterRequest> userRegisterRequestValidator,
+            IValidator<UserUpdateRequest> userUpdateRequestValidator)
         {
             _userService = userService;
             _tokenService = tokenService;
             _mapper = mapper;
             _userRegisterRequestValidator = userRegisterRequestValidator;
+            _userUpdateRequestValidator = userUpdateRequestValidator;
         }
 
         // Register New User
@@ -46,6 +49,16 @@ namespace ECommerceAPI.WebApi.Controllers
         {
             var user = await _userService.GetUserByIdAsync(userId);
             return Ok(_mapper.Map<UserResponse>(user));
+        }
+
+        // Update User Profile (Authenticated Users)
+        [Authorize]
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> UpdateUserProfile(int userId, [FromBody] UserUpdateRequest request)
+        {
+            await _userUpdateRequestValidator.ValidateAndThrowAsync(request);
+            var updatedUser = await _userService.UpdateUserProfileAsync(userId, request.FullName, request.Phone);
+            return Ok(_mapper.Map<UserResponse>(updatedUser));
         }
 
         // Get All Users (Admin Only)

@@ -25,7 +25,7 @@ namespace ECommerceAPI.Application.Services
             var existingUserEntity = await _userRepository.GetByEmailAsync(user.Email);
             if (existingUserEntity != null)
                 throw new InvalidOperationException("User already exists.");
-            
+
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
             user.Role = "User"; // Default role
             var userEntity = _mapper.Map<UserEntity>(user);
@@ -36,8 +36,8 @@ namespace ECommerceAPI.Application.Services
         public async Task<User> GetUserByIdAsync(int userId)
         {
             var userEntity = await _userRepository.GetByIdAsync(userId);
-            if(userEntity == null) throw new KeyNotFoundException("User not found.");
-            
+            if (userEntity == null) throw new KeyNotFoundException("User not found.");
+
             return _mapper.Map<User>(userEntity);
         }
 
@@ -55,7 +55,7 @@ namespace ECommerceAPI.Application.Services
 
             return _mapper.Map<User>(userEntity);
         }
-        
+
         public async Task<User> FindOrCreateUserFromGoogleAsync(GoogleJsonWebSignature.Payload payload)
         {
             // Try to find the user by email
@@ -84,6 +84,19 @@ namespace ECommerceAPI.Application.Services
 
             // Return the created user as domain model
             return _mapper.Map<User>(newUserEntity);
+        }
+
+        public async Task<User> UpdateUserProfileAsync(int userId, string fullName, string? phone)
+        {
+            var userEntity = await _userRepository.GetByIdAsync(userId);
+            if (userEntity == null)
+                throw new KeyNotFoundException("User not found.");
+
+            userEntity.FullName = fullName;
+            userEntity.Phone = phone;
+
+            await _userRepository.UpdateAsync(userEntity);
+            return _mapper.Map<User>(userEntity);
         }
     }
 }
