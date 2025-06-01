@@ -9,8 +9,8 @@ namespace ECommerceAPI.WebApi.Validators
         {
             RuleFor(o => o.Status)
                 .NotEmpty().WithMessage("Status is required.")
-                .Must(s => new[] { "Pending", "Shipped", "Delivered", "Cancelled" }.Contains(s))
-                .WithMessage("Invalid order status.");
+                .Must(s => new[] { "Pending", "Processing", "Shipped", "Delivered", "Cancelled" }.Contains(s))
+                .WithMessage("Invalid order status. Allowed values: Pending, Processing, Shipped, Delivered, Cancelled.");
         }
     }
 }

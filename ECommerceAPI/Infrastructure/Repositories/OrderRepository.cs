@@ -25,6 +25,9 @@ namespace ECommerceAPI.Infrastructure.Repositories
         {
             return await _context.Orders
                 .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                .Include(o => o.Address)
+                .Include(o => o.User)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
@@ -33,6 +36,9 @@ namespace ECommerceAPI.Infrastructure.Repositories
             return await _context.Orders
                 .Where(o => o.UserId == userId)
                 .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                .Include(o => o.Address)
+                .Include(o => o.User)
                 .ToListAsync();
         }
 
@@ -40,6 +46,9 @@ namespace ECommerceAPI.Infrastructure.Repositories
         {
             return await _context.Orders
                 .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                .Include(o => o.Address)
+                .Include(o => o.User)
                 .ToListAsync();
         }
 

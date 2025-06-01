@@ -92,6 +92,79 @@ public class ProductControllerTests
     }
 
     [Fact]
+    public async Task CreateProduct_ShouldAcceptNullDiscountedPrice()
+    {
+        // Arrange
+        var request = new ProductUpsertRequest
+        {
+            Name = "Test Product Without Discount",
+            Description = "Test Description",
+            OriginalPrice = 25.0m,
+            DiscountedPrice = null, // No discount
+            CategoryId = 1,
+            SizeId = 1,
+            Media = new List<ProductMediaRequest>
+            {
+                new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 1 }
+            }
+        };
+
+        var createdProduct = new Product
+        {
+            Id = 2,
+            Name = "Test Product Without Discount",
+            Description = "Test Description",
+            OriginalPrice = 25.0m,
+            DiscountedPrice = null,
+            CategoryId = 1,
+            SizeId = 1,
+            Media = new List<ProductMedia>
+            {
+                new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 1 }
+            }
+        };
+
+        var response = new ProductResponse
+        {
+            Id = 2,
+            Name = "Test Product Without Discount",
+            Description = "Test Description",
+            OriginalPrice = 25.0m,
+            DiscountedPrice = null,
+            DiscountPercentage = 0, // No discount
+            CategoryName = "Test Category",
+            SizeName = "Test Size",
+            Media = new List<ProductMediaResponse>
+            {
+                new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image.ToString(), OrderIndex = 1 }
+            }
+        };
+
+        _validatorMock.Setup(v => v.ValidateAsync(request, default))
+            .ReturnsAsync(new ValidationResult());
+
+        _mapperMock.Setup(m => m.Map<Product>(request)).Returns(createdProduct);
+
+        _productServiceMock.Setup(svc => svc.CreateProductAsync(It.IsAny<Product>()))
+            .ReturnsAsync(createdProduct);
+
+        _productServiceMock.Setup(svc => svc.GetProductResponseByIdAsync(2))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _controller.CreateProduct(request);
+
+        // Assert
+        var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+        var returnedResponse = Assert.IsType<ProductResponse>(createdResult.Value);
+        Assert.Equal(2, returnedResponse.Id);
+        Assert.Equal("Test Product Without Discount", returnedResponse.Name);
+        Assert.Null(returnedResponse.DiscountedPrice);
+        Assert.Equal(0, returnedResponse.DiscountPercentage);
+        Assert.Single(returnedResponse.Media);
+    }
+
+    [Fact]
     public async Task GetProductById_ShouldReturnProduct_WhenExists()
     {
         var response = new ProductResponse

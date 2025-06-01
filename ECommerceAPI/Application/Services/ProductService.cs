@@ -65,6 +65,16 @@ namespace ECommerceAPI.Application.Services
 
         public async Task<Product> CreateProductAsync(Product product)
         {
+            // Set discounted price to original price if not provided, or null if greater than original
+            if (!product.DiscountedPrice.HasValue)
+            {
+                product.DiscountedPrice = product.OriginalPrice;
+            }
+            else if (product.DiscountedPrice > product.OriginalPrice)
+            {
+                product.DiscountedPrice = product.OriginalPrice; // Cap at original price, don't allow higher
+            }
+
             var productEntity = _mapper.Map<ProductEntity>(product);
             await _productRepository.CreateAsync(productEntity);
 
@@ -74,6 +84,16 @@ namespace ECommerceAPI.Application.Services
 
         public async Task UpdateProductAsync(Product product)
         {
+            // Set discounted price to original price if not provided, or cap if greater than original
+            if (!product.DiscountedPrice.HasValue)
+            {
+                product.DiscountedPrice = product.OriginalPrice;
+            }
+            else if (product.DiscountedPrice > product.OriginalPrice)
+            {
+                product.DiscountedPrice = product.OriginalPrice; // Cap at original price, don't allow higher
+            }
+
             var existingProductEntity = await _productRepository.GetByIdAsync(product.Id);
             if (existingProductEntity == null) throw new KeyNotFoundException("Product not found");
 

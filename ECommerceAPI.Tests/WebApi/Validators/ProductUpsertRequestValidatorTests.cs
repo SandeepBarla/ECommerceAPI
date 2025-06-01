@@ -100,7 +100,7 @@ public class ProductUpsertRequestValidatorTests
         var request = new ProductUpsertRequest
         {
             OriginalPrice = 80m,
-            DiscountedPrice = 100m // Should be less than original price
+            DiscountedPrice = 100m // Should not be greater than original price
         };
         var result = _validator.TestValidate(request);
         result.ShouldHaveValidationErrorFor(x => x.DiscountedPrice);
@@ -113,6 +113,18 @@ public class ProductUpsertRequestValidatorTests
         {
             OriginalPrice = 120m,
             DiscountedPrice = 100m
+        };
+        var result = _validator.TestValidate(request);
+        result.ShouldNotHaveValidationErrorFor(x => x.DiscountedPrice);
+    }
+
+    [Fact]
+    public void ShouldNotHaveError_WhenDiscountedPriceEqualsOriginalPrice()
+    {
+        var request = new ProductUpsertRequest
+        {
+            OriginalPrice = 100m,
+            DiscountedPrice = 100m // Equal prices are now allowed
         };
         var result = _validator.TestValidate(request);
         result.ShouldNotHaveValidationErrorFor(x => x.DiscountedPrice);

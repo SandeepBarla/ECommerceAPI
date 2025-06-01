@@ -238,7 +238,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"fullName\": \"John Doe Updated\",\n  \"phone\": \"1234567890\"\n}"
+              "raw": "{\n  \"fullName\": \"Updated User Name\",\n  \"phone\": \"+1234567890\"\n}"
             },
             "url": {
               "raw": "{{ecommerceurl}}/api/users/:userId",
@@ -330,7 +330,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Home\",\n  \"street\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"state\": \"NY\",\n  \"pincode\": \"123456\",\n  \"phone\": \"1234567890\",\n  \"isDefault\": true\n}"
+              "raw": "{\n  \"street\": \"123 Main St\",\n  \"city\": \"New York\",\n  \"state\": \"NY\",\n  \"postalCode\": \"10001\",\n  \"country\": \"USA\"\n}"
             },
             "url": {
               "raw": "{{ecommerceurl}}/api/users/:userId/addresses",
@@ -363,7 +363,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Home Updated\",\n  \"street\": \"456 Updated Street\",\n  \"city\": \"Boston\",\n  \"state\": \"MA\",\n  \"pincode\": \"654321\",\n  \"phone\": \"0987654321\",\n  \"isDefault\": false\n}"
+              "raw": "{\n  \"street\": \"456 Updated St\",\n  \"city\": \"Los Angeles\",\n  \"state\": \"CA\",\n  \"postalCode\": \"90210\",\n  \"country\": \"USA\"\n}"
             },
             "url": {
               "raw": "{{ecommerceurl}}/api/users/:userId/addresses/:addressId",
@@ -495,7 +495,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"orderProducts\": [\n        { \"productId\": 2, \"quantity\": 3 }\n    ],\n    \"totalAmount\": 1500.00,\n    \"shippingAddress\": \"123, Street Name, City, Country\"\n}\n"
+              "raw": "{\n  \"orderProducts\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 1\n    }\n  ],\n  \"totalAmount\": 29.99,\n  \"addressId\": 1,\n  \"paymentProofUrl\": \"https://cloudinary.com/payment-proof.jpg\"\n}"
             },
             "url": {
               "raw": "{{ecommerceurl}}/api/users/:userId/orders",
@@ -504,7 +504,7 @@
               "variable": [
                 {
                   "key": "userId",
-                  "value": "2"
+                  "value": "1"
                 }
               ]
             }
@@ -529,7 +529,7 @@
               "variable": [
                 {
                   "key": "userId",
-                  "value": "2"
+                  "value": "1"
                 }
               ]
             }
@@ -554,11 +554,11 @@
               "variable": [
                 {
                   "key": "userId",
-                  "value": "2"
+                  "value": "1"
                 },
                 {
                   "key": "orderId",
-                  "value": "5"
+                  "value": "1"
                 }
               ]
             }
@@ -593,16 +593,15 @@
                 "key": "Authorization",
                 "value": "Bearer {{JWT_TOKEN}}",
                 "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"status\":\"Shipped\" \n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "raw": "{\n  \"status\": \"Shipped\"\n}"
             },
             "url": {
               "raw": "{{ecommerceurl}}/api/users/:userId/orders/:orderId",
@@ -611,11 +610,11 @@
               "variable": [
                 {
                   "key": "userId",
-                  "value": "2"
+                  "value": "1"
                 },
                 {
                   "key": "orderId",
-                  "value": "5"
+                  "value": "1"
                 }
               ]
             }
@@ -644,7 +643,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Pretty Pink Net Lehenga\",\n  \"description\": \"Grace in Every Twirl! Drape yourself in elegance with this pretty pink net lehenga, paired with a beautiful lilac floral blouse. The soft net dupatta adds a dreamy touch, making it a perfect pick for any occasion * Shine bright and make every moment magical!Grace in Every Twirl! Drape yourself in elegance with this pretty pink net lehenga, paired with a beautiful lilac floral blouse. The soft net dupatta adds a dreamy touch, making it a perfect pick for any occasion * Shine bright and make every moment magical!\",\n  \"price\": 149.99,\n  \"stock\": 40,\n  \"media\": [\n    {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/image/upload/v1739739118/prod6a_vkejab.jpg\",\n    \"type\": 0,\n    \"orderIndex\": 1\n  },\n  {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/video/upload/v1739739120/prod6v_ckhsw6.mp4\",\n    \"type\": 1,\n    \"orderIndex\": 2\n  },\n  {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/image/upload/v1739739119/prod6b_ohpd8v.jpg\",\n    \"type\": 0,\n    \"orderIndex\": 3\n  },\n  {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/image/upload/v1739739119/prod6c_v8ovyc.jpg\",\n    \"type\": 0,\n    \"orderIndex\": 4\n  }\n  ]\n}"
+              "raw": "{\n  \"name\": \"New Product\",\n  \"description\": \"A great new product\",\n  \"originalPrice\": 99.99,\n  \"discountedPrice\": 79.99,\n  \"isFeatured\": true,\n  \"newUntil\": \"2024-12-31T23:59:59Z\",\n  \"categoryId\": 1,\n  \"sizeId\": 1,\n  \"media\": [\n    {\n      \"mediaUrl\": \"https://example.com/image1.jpg\",\n      \"orderIndex\": 0,\n      \"type\": 0\n    },\n    {\n      \"mediaUrl\": \"https://example.com/video1.mp4\",\n      \"orderIndex\": 1,\n      \"type\": 1\n    }\n  ]\n}"
             },
             "url": {
               "raw": "{{ecommerceurl}}/api/products",
@@ -673,9 +672,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{ecommerceurl}}/api/products/12",
+              "raw": "{{ecommerceurl}}/api/products/:productId",
               "host": ["{{ecommerceurl}}"],
-              "path": ["api", "products", "12"]
+              "path": ["api", "products", ":productId"],
+              "variable": [
+                {
+                  "key": "productId",
+                  "value": "1"
+                }
+              ]
             }
           },
           "response": []
@@ -697,12 +702,18 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Mauve Brown Netted Lehenga\",\n  \"description\": \"Style yourself in this mauve brown netted lehenga, complemented by a shimmery tissue crop top embellished with colorful beadwork for a stunning look.\",\n  \"price\": 149.99,\n  \"stock\": 40,\n  \"media\": [\n    {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/image/upload/v1739739083/prod4a_qne7de.jpg\",\n    \"type\": 0,\n    \"orderIndex\": 1\n  },\n  {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/video/upload/v1739739085/prod4v_g5nmwc.mp4\",\n    \"type\": 1,\n    \"orderIndex\": 2\n  },\n  {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/image/upload/v1739739084/prod4b_metoea.jpg\",\n    \"type\": 0,\n    \"orderIndex\": 3\n  },\n  {\n    \"mediaUrl\": \"https://res.cloudinary.com/dkwnjlpaz/image/upload/v1739739084/prod4c_gno142.jpg\",\n    \"type\": 0,\n    \"orderIndex\": 4\n  }\n  ]\n}"
+              "raw": "{\n  \"name\": \"Updated Product\",\n  \"description\": \"Updated description\",\n  \"originalPrice\": 109.99,\n  \"discountedPrice\": 89.99,\n  \"isFeatured\": false,\n  \"newUntil\": \"2024-12-31T23:59:59Z\",\n  \"categoryId\": 2,\n  \"sizeId\": 2,\n  \"media\": [\n    {\n      \"mediaUrl\": \"https://example.com/updated-image1.jpg\",\n      \"orderIndex\": 0,\n      \"type\": 0\n    }\n  ]\n}"
             },
             "url": {
-              "raw": "{{ecommerceurl}}/api/products/8",
+              "raw": "{{ecommerceurl}}/api/products/:productId",
               "host": ["{{ecommerceurl}}"],
-              "path": ["api", "products", "8"]
+              "path": ["api", "products", ":productId"],
+              "variable": [
+                {
+                  "key": "productId",
+                  "value": "1"
+                }
+              ]
             }
           },
           "response": []
@@ -719,9 +730,15 @@
               }
             ],
             "url": {
-              "raw": "{{ecommerceurl}}/api/products/15",
+              "raw": "{{ecommerceurl}}/api/products/:productId",
               "host": ["{{ecommerceurl}}"],
-              "path": ["api", "products", "15"]
+              "path": ["api", "products", ":productId"],
+              "variable": [
+                {
+                  "key": "productId",
+                  "value": "1"
+                }
+              ]
             }
           },
           "response": []
@@ -823,13 +840,7 @@
           "name": "Get Categories",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{JWT_TOKEN}}",
-                "type": "text"
-              }
-            ],
+            "header": [],
             "url": {
               "raw": "{{ecommerceurl}}/api/categories",
               "host": ["{{ecommerceurl}}"],
@@ -872,11 +883,15 @@
                 "key": "Authorization",
                 "value": "Bearer {{JWT_TOKEN}}",
                 "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\" : \"Test Category\"\n}",
+              "raw": "{\n  \"name\": \"Test Category\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -900,11 +915,15 @@
                 "key": "Authorization",
                 "value": "Bearer {{JWT_TOKEN}}",
                 "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\" : \"Test Category Update\"\n}",
+              "raw": "{\n  \"name\": \"Test Category Update\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -943,7 +962,7 @@
               "variable": [
                 {
                   "key": "categoryId",
-                  "value": "5"
+                  "value": "4"
                 }
               ]
             }
@@ -959,13 +978,7 @@
           "name": "Get Sizes",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{JWT_TOKEN}}",
-                "type": "text"
-              }
-            ],
+            "header": [],
             "url": {
               "raw": "{{ecommerceurl}}/api/sizes",
               "host": ["{{ecommerceurl}}"],
@@ -975,16 +988,10 @@
           "response": []
         },
         {
-          "name": "Get Sizes by Id",
+          "name": "Get Size by Id",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{JWT_TOKEN}}",
-                "type": "text"
-              }
-            ],
+            "header": [],
             "url": {
               "raw": "{{ecommerceurl}}/api/sizes/:sizeId",
               "host": ["{{ecommerceurl}}"],
@@ -992,7 +999,7 @@
               "variable": [
                 {
                   "key": "sizeId",
-                  "value": "1"
+                  "value": "2"
                 }
               ]
             }
@@ -1008,11 +1015,15 @@
                 "key": "Authorization",
                 "value": "Bearer {{JWT_TOKEN}}",
                 "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\" : \"Test Size\",\n    \"sortOrder\" : 2\n}",
+              "raw": "{\n  \"name\": \"Test Size\",\n  \"sortOrder\": 2\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1036,11 +1047,15 @@
                 "key": "Authorization",
                 "value": "Bearer {{JWT_TOKEN}}",
                 "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\" : \"Test Size Update\",\n    \"sortOrder\": 5\n}",
+              "raw": "{\n  \"name\": \"Test Size Update\",\n  \"sortOrder\": 5\n}",
               "options": {
                 "raw": {
                   "language": "json"

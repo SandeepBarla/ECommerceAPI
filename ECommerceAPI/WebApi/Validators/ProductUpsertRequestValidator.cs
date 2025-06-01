@@ -15,12 +15,16 @@ namespace ECommerceAPI.WebApi.Validators
             RuleFor(p => p.OriginalPrice)
                 .GreaterThan(0).WithMessage("Original price must be greater than zero.");
 
-            // ✅ Discounted price validation
+            // ✅ Discounted price validation - only validate if it has a value
             RuleFor(p => p.DiscountedPrice)
                 .GreaterThan(0)
-                .LessThan(p => p.OriginalPrice)
                 .When(p => p.DiscountedPrice.HasValue)
-                .WithMessage("Discounted price must be greater than zero and less than original price.");
+                .WithMessage("Discounted price must be greater than zero.");
+
+            RuleFor(p => p.DiscountedPrice)
+                .LessThanOrEqualTo(p => p.OriginalPrice)
+                .When(p => p.DiscountedPrice.HasValue)
+                .WithMessage("Discounted price cannot be higher than original price.");
 
             RuleFor(p => p.Description)
                 .MaximumLength(1000).WithMessage("Description must not exceed 1000 characters.")
