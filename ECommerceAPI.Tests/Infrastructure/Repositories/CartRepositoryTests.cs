@@ -14,7 +14,7 @@ public class CartRepositoryTests
     public CartRepositoryTests()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
 
         _dbContext = new AppDbContext(options);
@@ -84,8 +84,15 @@ public class CartRepositoryTests
         _dbContext.Carts.Add(cart);
         await _dbContext.SaveChangesAsync();
 
+        // Detach the entity to simulate a fresh context
+        _dbContext.Entry(cart).State = EntityState.Detached;
+
+        // Get the cart from database to ensure proper tracking
+        var trackedCart = await _dbContext.Carts.FirstOrDefaultAsync(c => c.UserId == 3);
+        trackedCart.Should().NotBeNull();
+
         // Act
-        await _cartRepository.RemoveCartAsync(cart);
+        await _cartRepository.RemoveCartAsync(trackedCart!);
         var result = await _dbContext.Carts.FirstOrDefaultAsync(c => c.UserId == 3);
 
         // Assert

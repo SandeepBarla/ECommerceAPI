@@ -10,6 +10,7 @@ using ECommerceAPI.WebApi.DTOs.ResponseModels;
 using ECommerceAPI.Application.Models;
 using ECommerceAPI.Application.Models.Enums;
 namespace ECommerceAPI.Tests.WebApi.Controllers;
+
 public class ProductControllerTests
 {
     private readonly Mock<IProductService> _productServiceMock;
@@ -33,8 +34,8 @@ public class ProductControllerTests
         var request = new ProductUpsertRequest
         {
             Name = "Test Product",
-            Price = 20.0m,
-            Stock = 10,
+            OriginalPrice = 25.0m,
+            DiscountedPrice = 20.0m,
             Media = new List<ProductMediaRequest>
             {
                 new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 1 }
@@ -45,8 +46,8 @@ public class ProductControllerTests
         {
             Id = 1,
             Name = "Test Product",
-            Price = 20.0m,
-            Stock = 10,
+            OriginalPrice = 25.0m,
+            DiscountedPrice = 20.0m,
             Media = new List<ProductMedia>
             {
                 new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 1 }
@@ -57,8 +58,12 @@ public class ProductControllerTests
         {
             Id = 1,
             Name = "Test Product",
-            Price = 20.0m,
-            Stock = 10,
+            Description = "Test Description",
+            OriginalPrice = 25.0m,
+            DiscountedPrice = 20.0m,
+            DiscountPercentage = 20, // Calculated: (25-20)/25*100 = 20%
+            CategoryName = "Test Category",
+            SizeName = "Test Size",
             Media = new List<ProductMediaResponse>
             {
                 new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image.ToString(), OrderIndex = 1 }
@@ -69,10 +74,12 @@ public class ProductControllerTests
             .ReturnsAsync(new ValidationResult());
 
         _mapperMock.Setup(m => m.Map<Product>(request)).Returns(createdProduct);
-        _mapperMock.Setup(m => m.Map<ProductResponse>(createdProduct)).Returns(response);
 
         _productServiceMock.Setup(svc => svc.CreateProductAsync(It.IsAny<Product>()))
             .ReturnsAsync(createdProduct);
+
+        _productServiceMock.Setup(svc => svc.GetProductResponseByIdAsync(1))
+            .ReturnsAsync(response);
 
         // Act
         var result = await _controller.CreateProduct(request);
@@ -87,32 +94,23 @@ public class ProductControllerTests
     [Fact]
     public async Task GetProductById_ShouldReturnProduct_WhenExists()
     {
-        var product = new Product
-        {
-            Id = 1,
-            Name = "Test Product",
-            Price = 20.0m,
-            Stock = 10,
-            Media = new List<ProductMedia>
-            {
-                new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 1 }
-            }
-        };
-
         var response = new ProductResponse
         {
             Id = 1,
             Name = "Test Product",
-            Price = 20.0m,
-            Stock = 10,
+            Description = "Test Description",
+            OriginalPrice = 25.0m,
+            DiscountedPrice = 20.0m,
+            DiscountPercentage = 20, // Calculated: (25-20)/25*100 = 20%
+            CategoryName = "Test Category",
+            SizeName = "Test Size",
             Media = new List<ProductMediaResponse>
             {
                 new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image.ToString(), OrderIndex = 1 }
             }
         };
 
-        _productServiceMock.Setup(svc => svc.GetProductByIdAsync(1)).ReturnsAsync(product);
-        _mapperMock.Setup(m => m.Map<ProductResponse>(product)).Returns(response);
+        _productServiceMock.Setup(svc => svc.GetProductResponseByIdAsync(1)).ReturnsAsync(response);
 
         var result = await _controller.GetProductById(1);
 
@@ -127,49 +125,40 @@ public class ProductControllerTests
     public async Task GetProductById_ShouldReturnNotFound_WhenProductDoesNotExist()
     {
         _productServiceMock
-            .Setup(svc => svc.GetProductByIdAsync(1))
+            .Setup(svc => svc.GetProductResponseByIdAsync(1))
             .ThrowsAsync(new KeyNotFoundException("Product not found"));
-        
+
         // Act & Assert
         var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
             async () => await _controller.GetProductById(1)
         );
-        
+
         Assert.Equal("Product not found", exception.Message);
     }
 
     [Fact]
     public async Task GetAllProducts_ShouldReturnListOfProducts()
     {
-        var products = new List<Product>
-        {
-            new()
-            {
-                Id = 1,
-                Name = "Product 1",
-                Price = 10,
-                Stock = 5
-            }
-        };
-
         var responseList = new List<ProductListResponse>
         {
             new()
             {
                 Id = 1,
                 Name = "Product 1",
-                Price = 10,
-                Stock = 5,
-                PrimaryImageUrl = "https://example.com/image1.jpg"
+                OriginalPrice = 15,
+                DiscountedPrice = 10,
+                DiscountPercentage = 33, // Calculated: (15-10)/15*100 = 33%
+                PrimaryImageUrl = "https://example.com/image1.jpg",
+                CategoryName = "Test Category",
+                SizeName = "Test Size"
             }
         };
 
-        _productServiceMock.Setup(svc => svc.GetAllProductsAsync()).ReturnsAsync(products);
-        _mapperMock.Setup(m => m.Map<IEnumerable<ProductListResponse>>(products)).Returns(responseList);
+        _productServiceMock.Setup(svc => svc.GetProductListResponsesAsync()).ReturnsAsync(responseList);
 
         var result = await _controller.GetAllProducts();
         var okResult = Assert.IsType<OkObjectResult>(result);
-        var returnedResponse = Assert.IsType<List<ProductListResponse>>(okResult.Value);
+        var returnedResponse = okResult.Value as IEnumerable<ProductListResponse>;
 
         Assert.Single(returnedResponse);
     }
@@ -180,11 +169,27 @@ public class ProductControllerTests
         var request = new ProductUpsertRequest
         {
             Name = "Updated Product",
-            Price = 20.5m,
-            Stock = 10,
+            OriginalPrice = 25.0m,
+            DiscountedPrice = 20.5m,
             Media = new List<ProductMediaRequest>
             {
                 new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 1 }
+            }
+        };
+
+        var response = new ProductResponse
+        {
+            Id = 1,
+            Name = "Updated Product",
+            Description = "Test Description",
+            OriginalPrice = 25.0m,
+            DiscountedPrice = 20.5m,
+            DiscountPercentage = 18, // Calculated: (25-20.5)/25*100 = 18%
+            CategoryName = "Test Category",
+            SizeName = "Test Size",
+            Media = new List<ProductMediaResponse>
+            {
+                new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image.ToString(), OrderIndex = 1 }
             }
         };
 
@@ -193,6 +198,9 @@ public class ProductControllerTests
 
         _productServiceMock.Setup(svc => svc.UpdateProductAsync(It.IsAny<Product>()))
             .Returns(Task.CompletedTask);
+
+        _productServiceMock.Setup(svc => svc.GetProductResponseByIdAsync(1))
+            .ReturnsAsync(response);
 
         var result = await _controller.UpdateProduct(1, request);
 
@@ -215,12 +223,12 @@ public class ProductControllerTests
         _productServiceMock
             .Setup(svc => svc.DeleteProductAsync(1))
             .ThrowsAsync(new KeyNotFoundException("Product not found"));
-        
+
         // Act & Assert
         var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
             async () => await _controller.DeleteProduct(1)
         );
-        
+
         Assert.Equal("Product not found", exception.Message);
     }
 }

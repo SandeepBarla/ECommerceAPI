@@ -12,15 +12,31 @@ namespace ECommerceAPI.WebApi.Validators
                 .NotEmpty().WithMessage("Product name is required.")
                 .MaximumLength(100).WithMessage("Product name must not exceed 100 characters.");
 
-            RuleFor(p => p.Price)
-                .GreaterThan(0).WithMessage("Price must be greater than zero.");
+            RuleFor(p => p.OriginalPrice)
+                .GreaterThan(0).WithMessage("Original price must be greater than zero.");
 
-            RuleFor(p => p.Stock)
-                .GreaterThanOrEqualTo(0).WithMessage("Stock cannot be negative.");
+            // ✅ Discounted price validation
+            RuleFor(p => p.DiscountedPrice)
+                .GreaterThan(0)
+                .LessThan(p => p.OriginalPrice)
+                .When(p => p.DiscountedPrice.HasValue)
+                .WithMessage("Discounted price must be greater than zero and less than original price.");
 
             RuleFor(p => p.Description)
                 .MaximumLength(1000).WithMessage("Description must not exceed 1000 characters.")
                 .When(p => !string.IsNullOrEmpty(p.Description));
+
+            RuleFor(p => p.CategoryId)
+                .GreaterThan(0).WithMessage("CategoryId must be greater than zero.");
+
+            RuleFor(p => p.SizeId)
+                .GreaterThan(0).WithMessage("SizeId must be greater than zero.");
+
+            // ✅ NewUntil validation
+            RuleFor(p => p.NewUntil)
+                .GreaterThan(DateTime.UtcNow)
+                .When(p => p.NewUntil.HasValue)
+                .WithMessage("NewUntil must be a future date.");
 
             RuleFor(p => p.Media)
                 .NotEmpty().WithMessage("At least one media item is required.")
@@ -41,7 +57,7 @@ namespace ECommerceAPI.WebApi.Validators
             var orderIndexes = mediaList.Select(m => m.OrderIndex).OrderBy(x => x).ToList();
 
             // ✅ Ensure order starts from 1 and follows sequentially
-            return orderIndexes.Count == mediaList.Count && 
+            return orderIndexes.Count == mediaList.Count &&
                    orderIndexes.SequenceEqual(Enumerable.Range(1, mediaList.Count));
         }
     }

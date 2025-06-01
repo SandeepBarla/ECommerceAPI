@@ -25,16 +25,27 @@ public class ProductRepositoryTests
         _dbContext.Products.RemoveRange(_dbContext.Products);
         _dbContext.SaveChanges();
 
-        // Seed initial data
+        // Seed categories and sizes first (required for FK relationships)
+        _dbContext.Categories.Add(new CategoryEntity { Id = 1, Name = "Test Category" });
+        _dbContext.Sizes.Add(new SizeEntity { Id = 1, Name = "Test Size" });
+        _dbContext.SaveChanges();
+
+        // Seed initial data with simplified fields
         _dbContext.Products.AddRange(new List<ProductEntity>
         {
             new ProductEntity
             {
                 Id = 1,
                 Name = "Product A",
-                Price = 10.99m,
-                Stock = 50,
                 Description = "Product A Description",
+                OriginalPrice = 12.99m,
+                DiscountedPrice = 10.99m,
+                IsFeatured = true,
+                NewUntil = DateTime.UtcNow.AddDays(30),
+                CategoryId = 1,
+                SizeId = 1,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
                 Media = new List<ProductMediaEntity>
                 {
                     new() { Id = 1, ProductId = 1, MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 1 },
@@ -45,9 +56,13 @@ public class ProductRepositoryTests
             {
                 Id = 2,
                 Name = "Product B",
-                Price = 19.99m,
-                Stock = 30,
                 Description = "Product B Description",
+                OriginalPrice = 19.99m,
+                IsFeatured = false,
+                CategoryId = 1,
+                SizeId = 1,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
                 Media = new List<ProductMediaEntity>
                 {
                     new() { Id = 3, ProductId = 2, MediaUrl = "https://example.com/video1.mp4", Type = MediaType.Video, OrderIndex = 1 }
@@ -74,6 +89,9 @@ public class ProductRepositoryTests
         var productB = result.First(p => p.Id == 2);
         productB.Media.Should().HaveCount(1);
         productB.Media.First().MediaUrl.Should().Be("https://example.com/video1.mp4"); // ✅ Only OrderIndex 1
+
+        // Verify simplified fields are included
+        productA.IsFeatured.Should().BeTrue();
     }
 
     [Fact]
@@ -86,6 +104,10 @@ public class ProductRepositoryTests
         result.Should().NotBeNull();
         result.Name.Should().Be("Product A");
         result.Media.Should().HaveCount(2); // ✅ Fetches all media
+        result.Category.Should().NotBeNull();
+        result.Category.Name.Should().Be("Test Category");
+        result.Size.Should().NotBeNull();
+        result.Size.Name.Should().Be("Test Size");
     }
 
     [Fact]
@@ -106,9 +128,12 @@ public class ProductRepositoryTests
         {
             Id = 3,
             Name = "Product C",
-            Price = 15.99m,
-            Stock = 20,
             Description = "Product C Description",
+            OriginalPrice = 17.99m,
+            DiscountedPrice = 15.99m,
+            IsFeatured = false,
+            CategoryId = 1,
+            SizeId = 1,
             Media = new List<ProductMediaEntity>
             {
                 new() { Id = 4, ProductId = 3, MediaUrl = "https://example.com/image3.jpg", Type = MediaType.Image, OrderIndex = 1 }
@@ -123,6 +148,8 @@ public class ProductRepositoryTests
         result.Should().NotBeNull();
         result.Name.Should().Be("Product C");
         result.Media.Should().HaveCount(1);
+        result.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+        result.UpdatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
     }
 
     [Fact]
@@ -130,8 +157,9 @@ public class ProductRepositoryTests
     {
         // Arrange
         var product = await _productRepository.GetByIdAsync(1);
+        product.Should().NotBeNull();
         product.Name = "Updated Product A";
-        product.Price = 12.99m;
+        product.OriginalPrice = 12.99m;
 
         // Act
         await _productRepository.UpdateAsync(product);
@@ -140,7 +168,8 @@ public class ProductRepositoryTests
         // Assert
         result.Should().NotBeNull();
         result.Name.Should().Be("Updated Product A");
-        result.Price.Should().Be(12.99m);
+        result.OriginalPrice.Should().Be(12.99m);
+        result.UpdatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
     }
 
     [Fact]

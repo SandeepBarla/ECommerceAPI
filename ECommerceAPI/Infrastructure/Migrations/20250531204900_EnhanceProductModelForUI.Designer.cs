@@ -3,6 +3,7 @@ using System;
 using ECommerceAPI.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ECommerceAPI.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250531204900_EnhanceProductModelForUI")]
+    partial class EnhanceProductModelForUI
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -219,6 +222,10 @@ namespace ECommerceAPI.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasDefaultValue(1);
 
+                    b.Property<string>("Colors")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -226,10 +233,13 @@ namespace ECommerceAPI.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal?>("DiscountedPrice")
-                        .HasColumnType("numeric");
+                    b.Property<int?>("DiscountPercentage")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsFeatured")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsNew")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
@@ -239,13 +249,23 @@ namespace ECommerceAPI.Infrastructure.Migrations
                     b.Property<DateTime?>("NewUntil")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<decimal>("OriginalPrice")
+                    b.Property<decimal?>("OriginalPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
                     b.Property<int>("SizeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasDefaultValue(1);
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Tags")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");

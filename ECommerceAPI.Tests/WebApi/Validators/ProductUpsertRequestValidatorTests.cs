@@ -3,6 +3,7 @@ using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.Validators;
 using ECommerceAPI.Application.Models.Enums;
 namespace ECommerceAPI.Tests.WebApi.Validators;
+
 public class ProductUpsertRequestValidatorTests
 {
     private readonly ProductUpsertRequestValidator _validator;
@@ -16,76 +17,163 @@ public class ProductUpsertRequestValidatorTests
     [Fact]
     public void ShouldHaveError_WhenNameIsEmpty()
     {
-        var request = new ProductUpsertRequest { Name = "", Price = 10, Stock = 5, Media = new List<ProductMediaRequest> { new() { MediaUrl = "https://example.com/image.jpg", Type = MediaType.Image, OrderIndex = 1 } } };
+        var request = new ProductUpsertRequest { Name = "" };
         var result = _validator.TestValidate(request);
-        result.ShouldHaveValidationErrorFor(r => r.Name);
+        result.ShouldHaveValidationErrorFor(x => x.Name);
     }
 
     [Fact]
     public void ShouldHaveError_WhenNameExceedsMaxLength()
     {
-        var request = new ProductUpsertRequest { Name = new string('A', 101), Price = 10, Stock = 5, Media = new List<ProductMediaRequest> { new() { MediaUrl = "https://example.com/image.jpg", Type = MediaType.Image, OrderIndex = 1 } } };
+        var request = new ProductUpsertRequest { Name = new string('A', 101) };
         var result = _validator.TestValidate(request);
-        result.ShouldHaveValidationErrorFor(r => r.Name);
+        result.ShouldHaveValidationErrorFor(x => x.Name);
     }
 
-    // ✅ Price Validation Tests
+    // ✅ OriginalPrice Validation Tests
     [Fact]
-    public void ShouldHaveError_WhenPriceIsNegative()
+    public void ShouldHaveError_WhenOriginalPriceIsNegative()
     {
-        var request = new ProductUpsertRequest { Name = "Product", Price = -1, Stock = 5, Media = new List<ProductMediaRequest> { new() { MediaUrl = "https://example.com/image.jpg", Type = MediaType.Image, OrderIndex = 1 } } };
+        var request = new ProductUpsertRequest { OriginalPrice = -1 };
         var result = _validator.TestValidate(request);
-        result.ShouldHaveValidationErrorFor(r => r.Price);
+        result.ShouldHaveValidationErrorFor(x => x.OriginalPrice);
     }
 
     [Fact]
-    public void ShouldHaveError_WhenPriceIsZero()
+    public void ShouldHaveError_WhenOriginalPriceIsZero()
     {
-        var request = new ProductUpsertRequest { Name = "Product", Price = 0, Stock = 5, Media = new List<ProductMediaRequest> { new() { MediaUrl = "https://example.com/image.jpg", Type = MediaType.Image, OrderIndex = 1 } } };
+        var request = new ProductUpsertRequest { OriginalPrice = 0 };
         var result = _validator.TestValidate(request);
-        result.ShouldHaveValidationErrorFor(r => r.Price);
+        result.ShouldHaveValidationErrorFor(x => x.OriginalPrice);
     }
 
-    // ✅ Stock Validation Tests
+    // ✅ DiscountedPrice Validation Tests
     [Fact]
-    public void ShouldHaveError_WhenStockIsNegative()
+    public void ShouldHaveError_WhenDiscountedPriceIsNegative()
     {
-        var request = new ProductUpsertRequest { Name = "Product", Price = 10, Stock = -5, Media = new List<ProductMediaRequest> { new() { MediaUrl = "https://example.com/image.jpg", Type = MediaType.Image, OrderIndex = 1 } } };
+        var request = new ProductUpsertRequest { DiscountedPrice = -1 };
         var result = _validator.TestValidate(request);
-        result.ShouldHaveValidationErrorFor(r => r.Stock);
+        result.ShouldHaveValidationErrorFor(x => x.DiscountedPrice);
+    }
+
+    [Fact]
+    public void ShouldHaveError_WhenDiscountedPriceIsZero()
+    {
+        var request = new ProductUpsertRequest { DiscountedPrice = 0 };
+        var result = _validator.TestValidate(request);
+        result.ShouldHaveValidationErrorFor(x => x.DiscountedPrice);
+    }
+
+    [Fact]
+    public void ShouldNotHaveError_WhenDiscountedPriceIsNull()
+    {
+        var request = new ProductUpsertRequest
+        {
+            OriginalPrice = 100m,
+            DiscountedPrice = null
+        };
+        var result = _validator.TestValidate(request);
+        result.ShouldNotHaveValidationErrorFor(x => x.DiscountedPrice);
     }
 
     // ✅ Description Validation Tests
     [Fact]
     public void ShouldHaveError_WhenDescriptionExceedsMaxLength()
     {
-        var request = new ProductUpsertRequest
-        {
-            Name = "Product",
-            Price = 10,
-            Stock = 5,
-            Description = new string('D', 1001),
-            Media = new List<ProductMediaRequest> { new() { MediaUrl = "https://example.com/image.jpg", Type = MediaType.Image, OrderIndex = 1 } }
-        };
+        var request = new ProductUpsertRequest { Description = new string('A', 1001) };
         var result = _validator.TestValidate(request);
-        result.ShouldHaveValidationErrorFor(r => r.Description);
+        result.ShouldHaveValidationErrorFor(x => x.Description);
     }
 
     [Fact]
     public void ShouldNotHaveError_WhenDescriptionIsEmpty()
     {
-        var request = new ProductUpsertRequest { Name = "Product", Price = 10, Stock = 5, Description = "", Media = new List<ProductMediaRequest> { new() { MediaUrl = "https://example.com/image.jpg", Type = MediaType.Image, OrderIndex = 1 } } };
+        var request = new ProductUpsertRequest { Description = "" };
         var result = _validator.TestValidate(request);
-        result.ShouldNotHaveValidationErrorFor(r => r.Description);
+        result.ShouldNotHaveValidationErrorFor(x => x.Description);
+    }
+
+    // ✅ Discount Logic Validation Tests
+    [Fact]
+    public void ShouldHaveError_WhenDiscountedPriceIsGreaterThanOriginalPrice()
+    {
+        var request = new ProductUpsertRequest
+        {
+            OriginalPrice = 80m,
+            DiscountedPrice = 100m // Should be less than original price
+        };
+        var result = _validator.TestValidate(request);
+        result.ShouldHaveValidationErrorFor(x => x.DiscountedPrice);
+    }
+
+    [Fact]
+    public void ShouldNotHaveError_WhenDiscountedPriceIsLessThanOriginalPrice()
+    {
+        var request = new ProductUpsertRequest
+        {
+            OriginalPrice = 120m,
+            DiscountedPrice = 100m
+        };
+        var result = _validator.TestValidate(request);
+        result.ShouldNotHaveValidationErrorFor(x => x.DiscountedPrice);
+    }
+
+    [Fact]
+    public void ShouldHaveError_WhenCategoryIdIsZero()
+    {
+        var request = new ProductUpsertRequest { CategoryId = 0 };
+        var result = _validator.TestValidate(request);
+        result.ShouldHaveValidationErrorFor(x => x.CategoryId);
+    }
+
+    [Fact]
+    public void ShouldHaveError_WhenSizeIdIsZero()
+    {
+        var request = new ProductUpsertRequest { SizeId = 0 };
+        var result = _validator.TestValidate(request);
+        result.ShouldHaveValidationErrorFor(x => x.SizeId);
+    }
+
+    [Fact]
+    public void ShouldHaveError_WhenNewUntilIsInThePast()
+    {
+        var request = new ProductUpsertRequest
+        {
+            NewUntil = DateTime.UtcNow.AddDays(-1) // Past date
+        };
+        var result = _validator.TestValidate(request);
+        result.ShouldHaveValidationErrorFor(x => x.NewUntil);
+    }
+
+    [Fact]
+    public void ShouldNotHaveError_WhenNewUntilIsInTheFuture()
+    {
+        var request = new ProductUpsertRequest
+        {
+            NewUntil = DateTime.UtcNow.AddDays(30) // Future date
+        };
+        var result = _validator.TestValidate(request);
+        result.ShouldNotHaveValidationErrorFor(x => x.NewUntil);
+    }
+
+    [Fact]
+    public void ShouldNotHaveError_WhenNewUntilIsNull()
+    {
+        var request = new ProductUpsertRequest
+        {
+            NewUntil = null
+        };
+        var result = _validator.TestValidate(request);
+        result.ShouldNotHaveValidationErrorFor(x => x.NewUntil);
     }
 
     // ✅ Media Validation Tests
     [Fact]
     public void ShouldHaveError_WhenMediaIsEmpty()
     {
-        var request = new ProductUpsertRequest { Name = "Product", Price = 10, Stock = 5, Media = new List<ProductMediaRequest>() };
+        var request = new ProductUpsertRequest { Media = new List<ProductMediaRequest>() };
         var result = _validator.TestValidate(request);
-        result.ShouldHaveValidationErrorFor(r => r.Media);
+        result.ShouldHaveValidationErrorFor(x => x.Media);
     }
 
     [Fact]
@@ -93,17 +181,13 @@ public class ProductUpsertRequestValidatorTests
     {
         var request = new ProductUpsertRequest
         {
-            Name = "Product",
-            Price = 10,
-            Stock = 5,
             Media = new List<ProductMediaRequest>
             {
                 new() { MediaUrl = "invalid-url", Type = MediaType.Image, OrderIndex = 1 }
             }
         };
         var result = _validator.TestValidate(request);
-        result.ShouldHaveValidationErrorFor(r => r.Media)
-            .WithErrorMessage("One or more media entries are invalid.");
+        result.ShouldHaveValidationErrorFor(x => x.Media);
     }
 
     [Fact]
@@ -111,35 +195,13 @@ public class ProductUpsertRequestValidatorTests
     {
         var request = new ProductUpsertRequest
         {
-            Name = "Product",
-            Price = 10,
-            Stock = 5,
             Media = new List<ProductMediaRequest>
             {
-                new() { MediaUrl = "https://example.com/image.jpg", Type = (MediaType)99, OrderIndex = 1 }
+                new() { MediaUrl = "https://example.com/image1.jpg", Type = (MediaType)999, OrderIndex = 1 }
             }
         };
         var result = _validator.TestValidate(request);
-        result.ShouldHaveValidationErrorFor(r => r.Media)
-            .WithErrorMessage("One or more media entries are invalid.");
-    }
-
-    [Fact]
-    public void ShouldHaveError_WhenMediaOrderIndexesAreNotSequential()
-    {
-        var request = new ProductUpsertRequest
-        {
-            Name = "Product",
-            Price = 10,
-            Stock = 5,
-            Media = new List<ProductMediaRequest>
-            {
-                new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 1 },
-                new() { MediaUrl = "https://example.com/image2.jpg", Type = MediaType.Image, OrderIndex = 3 } // ❌ Skips index 2
-            }
-        };
-        var result = _validator.TestValidate(request);
-        result.ShouldHaveValidationErrorFor(r => r.Media);
+        result.ShouldHaveValidationErrorFor(x => x.Media);
     }
 
     [Fact]
@@ -147,35 +209,73 @@ public class ProductUpsertRequestValidatorTests
     {
         var request = new ProductUpsertRequest
         {
-            Name = "Product",
-            Price = 10,
-            Stock = 5,
             Media = new List<ProductMediaRequest>
             {
-                new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 2 }, // ❌ Starts at 2
-                new() { MediaUrl = "https://example.com/image2.jpg", Type = MediaType.Image, OrderIndex = 3 }
+                new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 2 }
             }
         };
         var result = _validator.TestValidate(request);
-        result.ShouldHaveValidationErrorFor(r => r.Media);
+        result.ShouldHaveValidationErrorFor(x => x.Media);
     }
 
     [Fact]
-    public void ShouldNotHaveError_WhenMediaIsValid()
+    public void ShouldHaveError_WhenMediaOrderIndexesAreNotSequential()
     {
         var request = new ProductUpsertRequest
         {
-            Name = "Valid Product",
-            Price = 20.99m,
-            Stock = 15,
-            Description = "A great product",
             Media = new List<ProductMediaRequest>
             {
                 new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 1 },
-                new() { MediaUrl = "https://example.com/image2.jpg", Type = MediaType.Image, OrderIndex = 2 },
-                new() { MediaUrl = "https://example.com/video.mp4", Type = MediaType.Video, OrderIndex = 3 }
+                new() { MediaUrl = "https://example.com/image2.jpg", Type = MediaType.Image, OrderIndex = 3 } // Should be 2
             }
         };
+        var result = _validator.TestValidate(request);
+        result.ShouldHaveValidationErrorFor(x => x.Media);
+    }
+
+    // ✅ Integration test for simplified product model
+    [Fact]
+    public void ShouldPassValidation_WhenValidSimplifiedProductRequest()
+    {
+        var request = new ProductUpsertRequest
+        {
+            Name = "Test Product",
+            Description = "Test Description",
+            OriginalPrice = 129.99m,
+            DiscountedPrice = 99.99m,
+            IsFeatured = true,
+            NewUntil = DateTime.UtcNow.AddDays(30),
+            CategoryId = 1,
+            SizeId = 1,
+            Media = new List<ProductMediaRequest>
+            {
+                new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 1 },
+                new() { MediaUrl = "https://example.com/video1.mp4", Type = MediaType.Video, OrderIndex = 2 }
+            }
+        };
+
+        var result = _validator.TestValidate(request);
+        result.ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Fact]
+    public void ShouldPassValidation_WhenValidProductRequestWithoutDiscount()
+    {
+        var request = new ProductUpsertRequest
+        {
+            Name = "Test Product Without Discount",
+            Description = "Test Description",
+            OriginalPrice = 99.99m,
+            DiscountedPrice = null, // No discount
+            IsFeatured = false,
+            CategoryId = 1,
+            SizeId = 1,
+            Media = new List<ProductMediaRequest>
+            {
+                new() { MediaUrl = "https://example.com/image1.jpg", Type = MediaType.Image, OrderIndex = 1 }
+            }
+        };
+
         var result = _validator.TestValidate(request);
         result.ShouldNotHaveAnyValidationErrors();
     }

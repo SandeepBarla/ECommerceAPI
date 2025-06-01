@@ -14,38 +14,47 @@ namespace ECommerceAPI.Infrastructure.Repositories
             _context = context;
         }
 
-
         public async Task<ProductEntity?> GetByIdAsync(int id)
         {
             return await _context.Products
-                .Include(p => p.Media.OrderBy(m => m.OrderIndex)) // ✅ Include related media
+                .Include(p => p.Media.OrderBy(m => m.OrderIndex)) // ✅ Include all media ordered
+                .Include(p => p.Category) // ✅ Include category for name
+                .Include(p => p.Size) // ✅ Include size for name
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<IEnumerable<ProductEntity>> GetAllAsync()
         {
-            return await _context.Products
-                .Select(p => new ProductEntity
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Price = p.Price,
-                    Stock = p.Stock,
-                    Media = p.Media
-                        .Where(m => m.OrderIndex == 1) // ✅ Fetch only the media with OrderIndex = 1
-                        .ToList()
-                })
+            var products = await _context.Products
+                .Include(p => p.Category) // ✅ Include category for name
+                .Include(p => p.Size) // ✅ Include size for name
+                .Include(p => p.Media) // ✅ Include all media first
                 .ToListAsync();
+
+            // ✅ Filter to only primary image (OrderIndex = 1) after loading
+            foreach (var product in products)
+            {
+                product.Media = product.Media.Where(m => m.OrderIndex == 1).ToList();
+            }
+
+            return products;
         }
 
         public async Task CreateAsync(ProductEntity product)
         {
+            // ✅ Set audit fields
+            product.CreatedAt = DateTime.UtcNow;
+            product.UpdatedAt = DateTime.UtcNow;
+
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(ProductEntity product)
         {
+            // ✅ Update audit field
+            product.UpdatedAt = DateTime.UtcNow;
+
             _context.Products.Update(product);
             await _context.SaveChangesAsync();
         }

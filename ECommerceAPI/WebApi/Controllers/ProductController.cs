@@ -34,16 +34,15 @@ namespace ECommerceAPI.WebApi.Controllers
             var product = _mapper.Map<Product>(productCreateRequest);
             var createdProduct = await _productService.CreateProductAsync(product);
 
-            var response = _mapper.Map<ProductResponse>(createdProduct);
-            return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, response);
+            var response = await _productService.GetProductResponseByIdAsync(createdProduct.Id);
+            return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, response);
         }
 
         // Get All Products (Public)
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            var products = await _productService.GetAllProductsAsync();
-            var response = _mapper.Map<IEnumerable<ProductListResponse>>(products);
+            var response = await _productService.GetProductListResponsesAsync();
             return Ok(response);
         }
 
@@ -51,8 +50,7 @@ namespace ECommerceAPI.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
-            var product = await _productService.GetProductByIdAsync(id);
-            var response = _mapper.Map<ProductResponse>(product);
+            var response = await _productService.GetProductResponseByIdAsync(id);
             return Ok(response);
         }
 
@@ -64,7 +62,9 @@ namespace ECommerceAPI.WebApi.Controllers
             await _productUpsertRequestValidator.ValidateAndThrowAsync(productUpdateRequest);
             var product = _mapper.Map<Product>((id, productUpdateRequest));
             await _productService.UpdateProductAsync(product);
-            return Ok(_mapper.Map<ProductResponse>(product));
+
+            var response = await _productService.GetProductResponseByIdAsync(id);
+            return Ok(response);
         }
 
         // Delete Product (Admin Only)
