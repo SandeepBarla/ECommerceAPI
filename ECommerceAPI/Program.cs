@@ -75,6 +75,7 @@ builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IValidator<ProductUpsertRequest>, ProductUpsertRequestValidator>();
 builder.Services.AddScoped<IValidator<OrderCreateRequest>, OrderCreateRequestValidator>();
 builder.Services.AddScoped<IValidator<OrderStatusUpdateRequest>, OrderStatusUpdateRequestValidator>();
+builder.Services.AddScoped<IValidator<PaymentStatusUpdateRequest>, PaymentStatusUpdateRequestValidator>();
 builder.Services.AddScoped<IValidator<UserLoginRequest>, UserLoginRequestValidator>();
 builder.Services.AddScoped<IValidator<UserRegisterRequest>, UserRegisterRequestValidator>();
 builder.Services.AddScoped<IValidator<CartAddOrUpdateItemRequest>, CartAddOrUpdateItemRequestValidator>();

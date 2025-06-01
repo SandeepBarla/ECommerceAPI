@@ -3,6 +3,7 @@ using ECommerceAPI.Application.Interfaces;
 using ECommerceAPI.Application.Models;
 using ECommerceAPI.WebApi.DTOs.RequestModels;
 using ECommerceAPI.WebApi.DTOs.ResponseModels;
+using ECommerceAPI.WebApi.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,17 +20,20 @@ namespace ECommerceAPI.WebApi.Controllers
         private readonly IMapper _mapper;
         private readonly IValidator<OrderCreateRequest> _orderCreateRequestValidator;
         private readonly IValidator<OrderStatusUpdateRequest> _orderStatusUpdateRequestValidator;
+        private readonly IValidator<PaymentStatusUpdateRequest> _paymentStatusUpdateRequestValidator;
 
         public OrderController(
             IOrderService orderService,
             IMapper mapper,
             IValidator<OrderCreateRequest> orderCreateRequestValidator,
-            IValidator<OrderStatusUpdateRequest> orderStatusUpdateRequestValidator)
+            IValidator<OrderStatusUpdateRequest> orderStatusUpdateRequestValidator,
+            IValidator<PaymentStatusUpdateRequest> paymentStatusUpdateRequestValidator)
         {
             _orderService = orderService;
             _mapper = mapper;
             _orderCreateRequestValidator = orderCreateRequestValidator;
             _orderStatusUpdateRequestValidator = orderStatusUpdateRequestValidator;
+            _paymentStatusUpdateRequestValidator = paymentStatusUpdateRequestValidator;
         }
 
         [Authorize]
@@ -38,17 +42,18 @@ namespace ECommerceAPI.WebApi.Controllers
         {
             await _orderCreateRequestValidator.ValidateAndThrowAsync(request);
             var order = _mapper.Map<Order>(request);
-            order.UserId = userId; 
+            order.UserId = userId;
             var createdOrder = await _orderService.CreateOrderAsync(order);
             return CreatedAtAction(nameof(GetOrderById), new { userId, id = createdOrder.Id }, _mapper.Map<OrderResponse>(createdOrder));
         }
 
         [Authorize]
         [HttpGet("users/{userId}/orders")]
-        public async Task<IActionResult> GetOrders(int userId)
+        public async Task<IActionResult> GetOrdersByUserId(int userId)
         {
             var orders = await _orderService.GetOrdersByUserIdAsync(userId);
-            return Ok(_mapper.Map<List<OrderResponse>>(orders));
+            var ordersResponse = _mapper.Map<List<OrderResponse>>(orders);
+            return Ok(ordersResponse);
         }
 
         [Authorize]
@@ -64,8 +69,8 @@ namespace ECommerceAPI.WebApi.Controllers
         [HttpGet("orders")]
         public async Task<IActionResult> GetAllOrders()
         {
-            var orders = await _orderService.GetAllOrdersAsync();
-            return Ok(_mapper.Map<List<OrderResponse>>(orders));
+            var orderEntities = await _orderService.GetAllOrderEntitiesAsync();
+            return Ok(_mapper.Map<List<OrderResponse>>(orderEntities));
         }
 
         [Authorize]
@@ -74,6 +79,15 @@ namespace ECommerceAPI.WebApi.Controllers
         {
             await _orderStatusUpdateRequestValidator.ValidateAndThrowAsync(request);
             await _orderService.UpdateOrderStatusAsync(id, request.Status);
+            return NoContent();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("orders/{id}/payment-status")]
+        public async Task<IActionResult> UpdatePaymentStatus(int id, [FromBody] PaymentStatusUpdateRequest request)
+        {
+            await _paymentStatusUpdateRequestValidator.ValidateAndThrowAsync(request);
+            await _orderService.UpdatePaymentStatusAsync(id, request.Status, request.Remarks);
             return NoContent();
         }
     }

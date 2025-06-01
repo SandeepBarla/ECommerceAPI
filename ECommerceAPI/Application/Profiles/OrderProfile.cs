@@ -24,16 +24,19 @@ namespace ECommerceAPI.Application.Profiles
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : "Unknown Product"))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Product != null ? (src.Product.DiscountedPrice ?? src.Product.OriginalPrice) : 0));
 
-            CreateMap<Order, OrderResponse>()
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
-
             // Enhanced OrderEntity to OrderResponse mapping with address and customer info
             CreateMap<OrderEntity, OrderResponse>()
                 .ForMember(dest => dest.Customer, opt => opt.MapFrom(src => src.User))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
 
+            // Order domain model to OrderResponse mapping - needed for controller tests
+            CreateMap<Order, OrderResponse>();
+
             // Customer info mapping
             CreateMap<UserEntity, CustomerInfoResponse>();
+
+            // Address mapping - needed for OrderEntity.Address to OrderResponse.Address
+            CreateMap<AddressEntity, AddressResponse>();
         }
     }
 }

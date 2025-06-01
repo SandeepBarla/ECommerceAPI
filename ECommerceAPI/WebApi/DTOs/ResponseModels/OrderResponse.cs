@@ -9,10 +9,11 @@ namespace ECommerceAPI.WebApi.DTOs.ResponseModels
         public int UserId { get; set; }
         public int? AddressId { get; set; }
         public AddressResponse? Address { get; set; }
-        public CustomerInfoResponse Customer { get; set; }
+        public CustomerInfoResponse? Customer { get; set; }
         public List<OrderProductResponse> OrderProducts { get; set; }
         public decimal TotalAmount { get; set; }
         public string PaymentStatus { get; set; }
+        public string? PaymentRemarks { get; set; }
         public string OrderStatus { get; set; }
         public DateTime OrderDate { get; set; }
         public string TrackingNumber { get; set; }

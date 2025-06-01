@@ -8,6 +8,7 @@ namespace ECommerceAPI.Infrastructure.Entities
         public decimal TotalAmount { get; set; }
         public string OrderStatus { get; set; } = "Processing";
         public string PaymentStatus { get; set; }
+        public string? PaymentRemarks { get; set; } // Admin remarks for payment rejection
         public string TrackingNumber { get; set; } = "Not Assigned";
         public DateTime OrderDate { get; set; }
         public string? PaymentProofUrl { get; set; } // Cloudinary URL for payment proof image

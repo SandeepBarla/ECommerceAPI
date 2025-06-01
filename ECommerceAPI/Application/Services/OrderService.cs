@@ -53,5 +53,26 @@ namespace ECommerceAPI.Application.Services
             orderEntity.OrderStatus = status;
             await _orderRepository.UpdateOrderAsync(orderEntity);
         }
+
+        public async Task UpdatePaymentStatusAsync(int orderId, string status, string? remarks = null)
+        {
+            var orderEntity = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (orderEntity == null) throw new KeyNotFoundException("Order not found");
+
+            orderEntity.PaymentStatus = status;
+            orderEntity.PaymentRemarks = remarks;
+            await _orderRepository.UpdateOrderAsync(orderEntity);
+        }
+
+        // Admin-specific methods that return full entity data with navigation properties
+        public async Task<List<OrderEntity>> GetAllOrderEntitiesAsync()
+        {
+            return await _orderRepository.GetAllOrdersAsync();
+        }
+
+        public async Task<OrderEntity?> GetOrderEntityByIdAsync(int id)
+        {
+            return await _orderRepository.GetOrderByIdAsync(id);
+        }
     }
 }
