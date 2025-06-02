@@ -144,6 +144,9 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.Migrate(); // Applies any pending migrations to Supabase
+
+    // ✅ Seed initial data
+    await ECommerceAPI.Infrastructure.Context.DataSeeder.SeedDataAsync(dbContext);
 }
 
 // Register Global Exception Handling Middleware
