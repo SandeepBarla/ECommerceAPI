@@ -86,7 +86,8 @@ public class DataSeederTests : IDisposable
 
     // Assert
     var sizes = await _dbContext.Sizes.ToListAsync();
-    sizes.Should().HaveCount(5);
+    sizes.Should().HaveCount(6);
+    sizes.Should().Contain(s => s.Name == "Free Size");
     sizes.Should().Contain(s => s.Name == "S");
     sizes.Should().Contain(s => s.Name == "M");
     sizes.Should().Contain(s => s.Name == "L");
@@ -129,7 +130,7 @@ public class DataSeederTests : IDisposable
     var sizes = await _dbContext.Sizes.ToListAsync();
 
     categories.Should().HaveCount(2);
-    sizes.Should().HaveCount(5);
+    sizes.Should().HaveCount(6);
 
     // Verify no duplicates
     categories.Count(c => c.Name == "Lehenga").Should().Be(1);

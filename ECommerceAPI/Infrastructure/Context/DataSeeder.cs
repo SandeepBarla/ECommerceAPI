@@ -50,11 +50,12 @@ public static class DataSeeder
     {
       var sizes = new List<SizeEntity>
             {
-                new SizeEntity { Id = 1, Name = "S" },
-                new SizeEntity { Id = 2, Name = "M" },
-                new SizeEntity { Id = 3, Name = "L" },
-                new SizeEntity { Id = 4, Name = "XL" },
-                new SizeEntity { Id = 5, Name = "XXL" }
+                new SizeEntity { Id = 1, Name = "Free Size", SortOrder = 0 },
+                new SizeEntity { Id = 2, Name = "S", SortOrder = 1 },
+                new SizeEntity { Id = 3, Name = "M", SortOrder = 2 },
+                new SizeEntity { Id = 4, Name = "L", SortOrder = 3 },
+                new SizeEntity { Id = 5, Name = "XL", SortOrder = 4 },
+                new SizeEntity { Id = 6, Name = "XXL", SortOrder = 5 }
             };
 
       await context.Sizes.AddRangeAsync(sizes);
